@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --tl-red: #D91E2A;
+  --tl-yellow: #FFCC00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #1A1A1A;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .section-pad {
+    @apply py-20 px-4 sm:px-6 lg:px-8;
+  }
+  .container-max {
+    @apply max-w-7xl mx-auto;
+  }
+  .heading-xl {
+    @apply font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-tight;
+  }
+  .heading-lg {
+    @apply font-display font-bold text-3xl sm:text-4xl leading-tight;
+  }
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-tl-red hover:bg-tl-redDark text-white font-bold px-8 py-4 rounded-full text-base transition-all duration-200 shadow-lg hover:shadow-red-400/40 hover:scale-105 active:scale-95;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 bg-tl-yellow hover:bg-yellow-400 text-tl-dark font-bold px-8 py-4 rounded-full text-base transition-all duration-200 hover:scale-105 active:scale-95;
+  }
+  .card-light {
+    @apply bg-white border border-tl-border rounded-2xl p-6 shadow-sm;
+  }
+  .tag {
+    @apply inline-block text-xs font-bold uppercase tracking-widest text-tl-red;
+  }
+}
