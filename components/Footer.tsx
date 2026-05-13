@@ -2,36 +2,63 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-tl-dark border-t border-white/10 py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="ToyLandia" width={40} height={40} className="object-contain" />
+    <footer className="bg-tl-ink relative overflow-hidden">
+
+      {/* Top marquee strip */}
+      <div className="bg-tl-yellow border-y-2 border-tl-ink overflow-hidden">
+        <div className="marquee-track py-2.5 text-tl-ink font-fun text-base whitespace-nowrap gap-8">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-8 px-6">
+              <span>TOYLANDIA</span><span aria-hidden>✦</span>
+              <span>BRAND NEW</span><span aria-hidden>✦</span>
+              <span>BY THE KILO</span><span aria-hidden>✦</span>
+              <span>DIRECT IMPORT</span><span aria-hidden>✦</span>
+              <span>FAMILY OWNED</span><span aria-hidden>✦</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="wrap py-12">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
+
+          {/* Brand */}
+          <div className="flex items-center gap-3 group">
+            <div className="relative">
+              <Image src="/logo.png" alt="ToyLandia" width={44} height={44} className="object-contain group-hover:animate-wiggle-fast" />
+              <span className="absolute -top-1 -right-1 text-base animate-bounce-soft">✨</span>
+            </div>
             <div>
-              <div className="font-display font-black text-white text-sm">TOYLANDIA</div>
-              <div className="text-xs text-gray-500">Brand-New Toys by the Kilo</div>
+              <div className="font-fun text-white text-xl tracking-tight">
+                <span className="text-tl-red">Toy</span>Landia
+              </div>
+              <div className="text-xs text-white/55 mt-0.5">Brand-new toys by the kilo</div>
             </div>
           </div>
 
-          <div className="flex gap-4 flex-wrap justify-center">
+          {/* Links */}
+          <nav className="flex gap-2 flex-wrap justify-center">
             {[
               { label: "Facebook", href: "https://www.facebook.com/officialtoylandia" },
-              { label: "TikTok", href: "https://www.tiktok.com/@brandnewtoys0" },
-              { label: "Shopee", href: "https://shopee.ph/toylandia678" },
+              { label: "TikTok",   href: "https://www.tiktok.com/@brandnewtoys0" },
+              { label: "Shopee",   href: "https://shopee.ph/toylandia678" },
             ].map((l) => (
               <a
                 key={l.label}
                 href={l.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-gray-500 hover:text-white transition-colors"
+                className="text-xs font-semibold text-white/80 hover:text-tl-yellow
+                           px-4 py-2 rounded-full border border-white/15 hover:border-tl-yellow
+                           transition-colors"
               >
                 {l.label}
               </a>
             ))}
-          </div>
+          </nav>
 
-          <div className="text-xs text-gray-500 text-center sm:text-right">
+          {/* Legal */}
+          <div className="text-xs text-white/55 text-center sm:text-right">
             <p>toylandia6@gmail.com</p>
             <p className="mt-1">© {new Date().getFullYear()} ToyLandia. All rights reserved.</p>
           </div>

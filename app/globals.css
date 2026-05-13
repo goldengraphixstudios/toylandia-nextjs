@@ -1,52 +1,168 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Bagel+Fat+One&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --tl-red: #D91E2A;
+  --tl-red:    #E11D2A;
   --tl-yellow: #FFCC00;
+  --tl-ink:    #1A1410;
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #FFFBF2;
+    color: #1A1410;
+    font-family: "Fredoka", "Nunito", system-ui, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  ::selection { background: #FFCC00; color: #1A1410; }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: #ffffff;
-  color: #1A1A1A;
-  font-family: 'Inter', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #FFF6E1; }
+  ::-webkit-scrollbar-thumb { background: #E11D2A; border-radius: 8px; border: 2px solid #FFF6E1; }
 }
 
 @layer utilities {
-  .section-pad {
-    @apply py-20 px-4 sm:px-6 lg:px-8;
+  /* Layout — generous, breathable */
+  .wrap    { @apply max-w-7xl mx-auto px-5 sm:px-8 lg:px-12; }
+  .section { @apply py-20 sm:py-28 lg:py-32 relative; }
+
+  /* Typography */
+  .display-2xl { @apply font-fun text-5xl sm:text-7xl lg:text-[6.5rem] leading-[0.95] tracking-tight; }
+  .display-xl  { @apply font-fun text-4xl sm:text-5xl lg:text-6xl leading-[0.98] tracking-tight; }
+  .display-lg  { @apply font-fun text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight; }
+  .display-md  { @apply font-display font-bold text-xl sm:text-2xl leading-snug; }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em]
+           bg-white text-tl-red px-3 py-1.5 rounded-full border border-tl-red/30;
   }
-  .container-max {
-    @apply max-w-7xl mx-auto;
+  .eyebrow-yellow {
+    @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em]
+           bg-tl-yellow text-tl-ink px-3 py-1.5 rounded-full;
   }
-  .heading-xl {
-    @apply font-display font-black text-4xl sm:text-5xl lg:text-6xl leading-tight;
-  }
-  .heading-lg {
-    @apply font-display font-bold text-3xl sm:text-4xl leading-tight;
-  }
+
+  .body-lg { @apply text-lg leading-relaxed text-tl-charcoal; }
+  .body-md { @apply text-base leading-relaxed text-tl-charcoal; }
+
+  /* Buttons — chunky toy-block, used sparingly */
   .btn-primary {
-    @apply inline-flex items-center gap-2 bg-tl-red hover:bg-tl-redDark text-white font-bold px-8 py-4 rounded-full text-base transition-all duration-200 shadow-lg hover:shadow-red-400/40 hover:scale-105 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 bg-tl-red text-white
+           font-semibold px-6 py-3 rounded-full text-sm
+           border-2 border-tl-ink shadow-toy-sm
+           transition-all duration-150 hover:-translate-y-0.5 hover:shadow-toy
+           active:translate-y-0.5 active:shadow-[0_2px_0_0_#1A1410];
   }
-  .btn-secondary {
-    @apply inline-flex items-center gap-2 bg-tl-yellow hover:bg-yellow-400 text-tl-dark font-bold px-8 py-4 rounded-full text-base transition-all duration-200 hover:scale-105 active:scale-95;
+  .btn-yellow {
+    @apply inline-flex items-center justify-center gap-2 bg-tl-yellow text-tl-ink
+           font-semibold px-6 py-3 rounded-full text-sm
+           border-2 border-tl-ink shadow-toy-sm
+           transition-all duration-150 hover:-translate-y-0.5 hover:shadow-toy
+           active:translate-y-0.5 active:shadow-[0_2px_0_0_#1A1410];
   }
-  .card-light {
-    @apply bg-white border border-tl-border rounded-2xl p-6 shadow-sm;
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 bg-white text-tl-ink
+           font-semibold px-6 py-3 rounded-full text-sm
+           border-2 border-tl-ink shadow-toy-sm
+           transition-all duration-150 hover:-translate-y-0.5 hover:shadow-toy hover:bg-tl-yellow
+           active:translate-y-0.5 active:shadow-[0_2px_0_0_#1A1410];
   }
-  .tag {
-    @apply inline-block text-xs font-bold uppercase tracking-widest text-tl-red;
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5 font-semibold text-sm text-tl-ink
+           hover:text-tl-red transition-colors;
   }
+  .btn-lg  { @apply !px-7 !py-3.5 !text-base; }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-3xl border border-tl-line
+           transition-all duration-300;
+  }
+  .card-bold {
+    @apply bg-white rounded-3xl border-2 border-tl-ink shadow-toy-sm
+           transition-all duration-200;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1 hover:shadow-toy;
+  }
+
+  /* Patterns */
+  .bg-dots {
+    background-image: radial-gradient(circle, rgba(26,20,16,0.10) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(26,20,16,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,20,16,0.05) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+
+  /* Subtle reveal */
+  .reveal { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+}
+
+/* Marquee X */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 60s linear infinite;
+}
+.marquee-track-fast { animation-duration: 30s; }
+.marquee-track-slower { animation-duration: 105s; }
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes fade-up {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Underline draw on hover */
+.draw-underline {
+  background-image: linear-gradient(#FFCC00, #FFCC00);
+  background-size: 0% 6px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.4s ease;
+}
+.draw-underline:hover { background-size: 100% 6px; }
+
+/* Shimmer overlay (for primary CTA) */
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Stagger helper — use with .reveal */
+.stagger > * { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.15s; }
+.stagger > *:nth-child(3) { animation-delay: 0.25s; }
+.stagger > *:nth-child(4) { animation-delay: 0.35s; }
+.stagger > *:nth-child(5) { animation-delay: 0.45s; }
+.stagger > *:nth-child(6) { animation-delay: 0.55s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .animate-float, .animate-float-slow, .animate-wiggle, .animate-wiggle-fast,
+  .animate-spin-slow, .animate-spin-reverse, .animate-pulse-slow,
+  .animate-bounce-soft, .animate-tada, .shimmer::after,
+  .stagger > *, .reveal { animation: none !important; }
 }
