@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { assetPath } from "@/lib/assetPath";
 import { useState, useEffect } from "react";
 
 const links = [
@@ -34,7 +35,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <Image
-            src="/logo.png"
+            src={assetPath("/logo.png")}
             alt="ToyLandia"
             width={44}
             height={44}

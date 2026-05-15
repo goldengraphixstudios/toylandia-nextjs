@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+import { assetPath } from "@/lib/assetPath";
+
 type Props = {
   images: string[];
   /** Tailwind height class — controls strip height; image width preserves aspect ratio. */
@@ -38,7 +40,7 @@ export default function ImageMarquee({
                         border-2 border-tl-ink bg-white shadow-toy-sm`}
           >
             <img
-              src={src}
+              src={assetPath(src)}
               alt=""
               className="h-full w-auto block select-none"
               draggable={false}

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { BookOpenIcon, StarIcon, GiftIcon, BabyIcon, ConfettiIcon, BoxIcon } from "@/components/Icons";
+import { assetPath } from "@/lib/assetPath";
 
 const categories = [
   { label: "Learning & Activity", Icon: BookOpenIcon, img: "/toy-2.jpg", desc: "Puzzles, building sets, educational kits", emoji: "🧩" },
@@ -52,7 +53,7 @@ export default function ProductWorlds() {
             >
               <div className="relative h-48 sm:h-56 bg-tl-warm overflow-hidden">
                 <img
-                  src={img}
+                  src={assetPath(img)}
                   alt={label}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />

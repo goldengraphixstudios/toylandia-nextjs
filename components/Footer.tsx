@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 
 export default function Footer() {
   return (
@@ -25,7 +26,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex items-center gap-3 group">
             <div className="relative">
-              <Image src="/logo.png" alt="ToyLandia" width={44} height={44} className="object-contain group-hover:animate-wiggle-fast" />
+              <Image src={assetPath("/logo.png")} alt="ToyLandia" width={44} height={44} className="object-contain group-hover:animate-wiggle-fast" />
               <span className="absolute -top-1 -right-1 text-base animate-bounce-soft">✨</span>
             </div>
             <div>

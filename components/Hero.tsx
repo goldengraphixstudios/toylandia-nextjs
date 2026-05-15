@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { assetPath } from "@/lib/assetPath";
 
 const stats = [
   { value: "100%", label: "Brand-new" },
@@ -11,7 +12,7 @@ export default function Hero() {
     <section className="relative min-h-[100vh] overflow-hidden pt-24 pb-20">
       {/* Hero background image */}
       <Image
-        src="/hero-bg.png"
+        src={assetPath("/hero-bg.png")}
         alt=""
         fill
         priority
@@ -114,7 +115,7 @@ export default function Hero() {
             <div className="absolute inset-[18%] flex items-center justify-center animate-float">
               <div className="animate-wiggle">
                 <Image
-                  src="/logo.png"
+                  src={assetPath("/logo.png")}
                   alt="ToyLandia"
                   width={300}
                   height={300}
