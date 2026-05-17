@@ -81,7 +81,7 @@ function shopeeImageUrl(image: string) {
 }
 
 function categoryUrl(id: string) {
-  return `${SHOPEE_SHOP_URL}?categoryId=${id}`;
+  return `${SHOPEE_SHOP_URL}?shopCollection=${id}&tab=product`;
 }
 
 export default function ProductWorlds() {
