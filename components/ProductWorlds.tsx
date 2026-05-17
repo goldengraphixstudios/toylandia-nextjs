@@ -21,6 +21,7 @@ const shopeeCategories = [
     image: "ph-11134207-820le-mn5f1txgrpxk33",
     copy: "Character toys, display pieces, model finds, and fast-moving toy picks.",
     color: "bg-tl-red text-white",
+    accent: "bg-tl-red",
     Icon: StarIcon,
   },
   {
@@ -30,6 +31,7 @@ const shopeeCategories = [
     image: "ph-11134207-820lh-mn3sn8i3fymcd4",
     copy: "Learning toys, activity sets, and play items for skill-building.",
     color: "bg-tl-yellow text-tl-ink",
+    accent: "bg-tl-yellow",
     Icon: BookOpenIcon,
   },
   {
@@ -39,6 +41,7 @@ const shopeeCategories = [
     image: "ph-11134207-820lb-mn3ptnimp7gh28",
     copy: "Role-play toys, pretend-play sets, and imagination-ready finds.",
     color: "bg-white text-tl-ink",
+    accent: "bg-tl-red",
     Icon: GiftIcon,
   },
   {
@@ -48,6 +51,7 @@ const shopeeCategories = [
     image: "ph-11134207-820l4-mn2qapothcsi22",
     copy: "Doll picks and companion toys for gift-ready browsing.",
     color: "bg-tl-red text-white",
+    accent: "bg-tl-yellow",
     Icon: BabyIcon,
   },
   {
@@ -57,6 +61,7 @@ const shopeeCategories = [
     image: "ph-11134207-820l9-mn0yvtq9wh6u3c",
     copy: "Light-up, sound, battery-operated, and interactive toy options.",
     color: "bg-tl-yellow text-tl-ink",
+    accent: "bg-tl-red",
     Icon: ToyBrickIcon,
   },
   {
@@ -66,6 +71,7 @@ const shopeeCategories = [
     image: "ph-11134207-820l5-mnb7j22ph0xtd7",
     copy: "Family games and shared-play picks for kids and groups.",
     color: "bg-white text-tl-ink",
+    accent: "bg-tl-yellow",
     Icon: PuzzleIcon,
   },
 ];
@@ -108,7 +114,7 @@ export default function ProductWorlds() {
         </header>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {shopeeCategories.map(({ label, total, id, image, copy, color, Icon }, index) => {
+          {shopeeCategories.map(({ label, total, id, image, copy, color, accent, Icon }, index) => {
             const url = categoryUrl(id);
 
             return (
@@ -116,24 +122,25 @@ export default function ProductWorlds() {
                 key={id}
                 className="group relative overflow-hidden rounded-[2rem] border-2 border-tl-ink bg-white shadow-toy-sm transition-all duration-300 hover:-translate-y-1.5 hover:rotate-[-0.4deg] hover:shadow-toy"
               >
-                <div className="relative h-64 overflow-hidden bg-tl-warm">
+                <div className="relative h-80 overflow-hidden bg-tl-warm sm:h-96">
+                  <div className={`absolute left-0 top-0 z-10 h-full w-3 ${accent}`} />
                   <img
                     src={shopeeImageUrl(image)}
                     alt={`${label} category on ToyLandia Shopee`}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                     loading={index > 2 ? "lazy" : "eager"}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-tl-ink/88 via-tl-ink/20 to-white/5" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-tl-ink/40 via-transparent to-white/5" />
 
                   <iframe
                     title={`${label} Shopee category preview`}
                     src={url}
                     loading="lazy"
                     sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                    className="pointer-events-none absolute inset-0 h-full w-full scale-[1.04] opacity-0 transition-opacity duration-500 group-hover:opacity-15"
+                    className="pointer-events-none absolute inset-0 h-full w-full scale-[1.04] opacity-0 transition-opacity duration-500 group-hover:opacity-10"
                   />
 
-                  <div className="absolute left-4 top-4 flex items-center gap-2">
+                  <div className="absolute left-6 top-4 z-20 flex items-center gap-2">
                     <span className={`flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-tl-ink shadow-toy-sm ${color}`}>
                       <Icon className="h-5 w-5" />
                     </span>
@@ -142,27 +149,32 @@ export default function ProductWorlds() {
                     </span>
                   </div>
 
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="font-fun text-3xl leading-none text-white drop-shadow-[0_3px_0_rgba(26,20,16,0.45)]">
-                      {label}
-                    </p>
-                    <p className="mt-2 max-w-sm text-sm font-semibold leading-snug text-white/86">{copy}</p>
-                  </div>
                 </div>
 
-                <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
-                  <div className="rounded-2xl border border-tl-line bg-tl-warm px-4 py-3">
-                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-tl-red">Shopee category link</p>
-                    <p className="mt-1 truncate text-sm font-bold text-tl-ink">{label}</p>
+                <div className="relative p-5">
+                  <div className="absolute -top-5 left-5 rounded-full border-2 border-tl-ink bg-white px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-tl-red shadow-toy-sm">
+                    Shopee category
                   </div>
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary justify-center whitespace-nowrap"
-                  >
-                    Open category
-                  </a>
+
+                  <div className="mt-2">
+                    <h3 className="font-fun text-3xl leading-none text-tl-ink sm:text-4xl">{label}</h3>
+                    <p className="mt-3 text-sm font-semibold leading-relaxed text-tl-charcoal">{copy}</p>
+                  </div>
+
+                  <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                    <div className="rounded-2xl border-2 border-tl-line bg-tl-warm px-4 py-3">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-tl-red">Available in this category</p>
+                      <p className="mt-1 text-lg font-black text-tl-ink">{total} listed items</p>
+                    </div>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary justify-center whitespace-nowrap"
+                    >
+                      Open category
+                    </a>
+                  </div>
                 </div>
               </article>
             );
