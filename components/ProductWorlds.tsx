@@ -108,8 +108,7 @@ export default function ProductWorlds() {
             <span className="text-tl-red">Shopee.</span>
           </h2>
           <p className="body-md mx-auto mt-5 max-w-2xl">
-            Each category opens directly to ToyLandia&apos;s Shopee store. If the live Shopee preview is blocked by the marketplace,
-            use the button on each card to continue shopping.
+            Each category opens directly to ToyLandia&apos;s Shopee store, so customers can browse current listings, vouchers, and checkout options without waiting on embedded marketplace previews.
           </p>
         </header>
 
@@ -131,14 +130,6 @@ export default function ProductWorlds() {
                     loading={index > 2 ? "lazy" : "eager"}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-tl-ink/40 via-transparent to-white/5" />
-
-                  <iframe
-                    title={`${label} Shopee category preview`}
-                    src={url}
-                    loading="lazy"
-                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                    className="pointer-events-none absolute inset-0 h-full w-full scale-[1.04] opacity-0 transition-opacity duration-500 group-hover:opacity-10"
-                  />
 
                   <div className="absolute left-6 top-4 z-20 flex items-center gap-2">
                     <span className={`flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-tl-ink shadow-toy-sm ${color}`}>
@@ -221,8 +212,7 @@ export default function ProductWorlds() {
         </div>
 
         <p className="mx-auto mt-6 max-w-3xl text-center text-xs font-semibold leading-relaxed text-tl-muted">
-          Shopee may prevent full in-page iframe previews for security. The category and shop buttons always redirect to the official
-          ToyLandia Shopee account.
+          Category and shop buttons redirect to the official ToyLandia Shopee account for current stock, prices, vouchers, and checkout.
         </p>
       </div>
     </section>

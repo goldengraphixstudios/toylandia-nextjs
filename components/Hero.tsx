@@ -12,7 +12,7 @@ export default function Hero() {
     <section className="relative min-h-[100vh] overflow-hidden pt-24 pb-20">
       {/* Hero background image */}
       <Image
-        src={assetPath("/hero-bg.png")}
+        src={assetPath("/hero-bg.jpg")}
         alt=""
         fill
         priority
