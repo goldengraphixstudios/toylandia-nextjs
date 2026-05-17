@@ -1,84 +1,217 @@
 /* eslint-disable @next/next/no-img-element */
-import { BookOpenIcon, StarIcon, GiftIcon, BabyIcon, ConfettiIcon, BoxIcon } from "@/components/Icons";
-import { assetPath } from "@/lib/assetPath";
+import {
+  BabyIcon,
+  BookOpenIcon,
+  BoxIcon,
+  GiftIcon,
+  PuzzleIcon,
+  ShoppingBagIcon,
+  StarIcon,
+  StoreIcon,
+  ToyBrickIcon,
+} from "@/components/Icons";
 
-const categories = [
-  { label: "Learning & Activity", Icon: BookOpenIcon, img: "/toy-2.jpg", desc: "Puzzles, building sets, educational kits", emoji: "🧩" },
-  { label: "Character & Cartoon", Icon: StarIcon,     img: "/toy-3.jpg", desc: "Licensed characters kids already love",  emoji: "⭐" },
-  { label: "Surprise Gift Finds", Icon: GiftIcon,     img: "/toy-4.jpg", desc: "Mystery-worthy, gift-ready picks",       emoji: "🎁" },
-  { label: "Baby & Toddler",      Icon: BabyIcon,     img: "/toy-5.jpg", desc: "Safe, bright, age-appropriate",          emoji: "🍼" },
-  { label: "Party & Giveaways",   Icon: ConfettiIcon, img: "/toy-6.jpg", desc: "Bulk-ready for events and celebrations", emoji: "🎉" },
-  { label: "Reseller Bulk Picks", Icon: BoxIcon,      img: "/toy-7.jpg", desc: "Mixed lots for maximum margin",          emoji: "📦" },
+const SHOPEE_SHOP_URL = "https://shopee.ph/toylandia678";
+
+const shopeeCategories = [
+  {
+    label: "Collectibles",
+    total: 247,
+    id: "11021353",
+    image: "ph-11134207-820le-mn5f1txgrpxk33",
+    copy: "Character toys, display pieces, model finds, and fast-moving toy picks.",
+    color: "bg-tl-red text-white",
+    Icon: StarIcon,
+  },
+  {
+    label: "Educational Toys",
+    total: 8,
+    id: "11021368",
+    image: "ph-11134207-820lh-mn3sn8i3fymcd4",
+    copy: "Learning toys, activity sets, and play items for skill-building.",
+    color: "bg-tl-yellow text-tl-ink",
+    Icon: BookOpenIcon,
+  },
+  {
+    label: "Dress Up & Pretend",
+    total: 6,
+    id: "11021397",
+    image: "ph-11134207-820lb-mn3ptnimp7gh28",
+    copy: "Role-play toys, pretend-play sets, and imagination-ready finds.",
+    color: "bg-white text-tl-ink",
+    Icon: GiftIcon,
+  },
+  {
+    label: "Dolls",
+    total: 5,
+    id: "11021377",
+    image: "ph-11134207-820l4-mn2qapothcsi22",
+    copy: "Doll picks and companion toys for gift-ready browsing.",
+    color: "bg-tl-red text-white",
+    Icon: BabyIcon,
+  },
+  {
+    label: "Electronic Toys",
+    total: 5,
+    id: "11021365",
+    image: "ph-11134207-820l9-mn0yvtq9wh6u3c",
+    copy: "Light-up, sound, battery-operated, and interactive toy options.",
+    color: "bg-tl-yellow text-tl-ink",
+    Icon: ToyBrickIcon,
+  },
+  {
+    label: "Boards & Family Games",
+    total: 2,
+    id: "11021360",
+    image: "ph-11134207-820l5-mnb7j22ph0xtd7",
+    copy: "Family games and shared-play picks for kids and groups.",
+    color: "bg-white text-tl-ink",
+    Icon: PuzzleIcon,
+  },
 ];
 
+function shopeeImageUrl(image: string) {
+  return `https://down-ph.img.susercontent.com/file/${image}`;
+}
+
+function categoryUrl(id: string) {
+  return `${SHOPEE_SHOP_URL}?categoryId=${id}`;
+}
+
 export default function ProductWorlds() {
+  const totalItems = shopeeCategories.reduce((sum, category) => sum + category.total, 0);
+
   return (
-    <section id="products" className="section bg-white overflow-hidden">
+    <section id="products" className="section overflow-hidden bg-[#FFF5DA]">
+      <div className="absolute inset-0 bg-grid opacity-70" />
+      <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-tl-yellow/55 blur-3xl" />
+      <div className="absolute -right-20 bottom-14 h-80 w-80 rounded-full bg-tl-red/20 blur-3xl" />
 
-      <span aria-hidden className="absolute top-12 left-[6%] text-5xl animate-float opacity-70">🎨</span>
-      <span aria-hidden className="absolute bottom-24 right-[6%] text-5xl animate-wiggle opacity-70">🪀</span>
+      <span aria-hidden className="absolute left-[5%] top-14 hidden rounded-full border-2 border-tl-ink bg-white px-5 py-2 text-sm font-black text-tl-red shadow-toy-sm rotate-[-8deg] md:block">
+        Shopee categories
+      </span>
+      <span aria-hidden className="absolute bottom-16 right-[7%] hidden rounded-full border-2 border-tl-ink bg-tl-yellow px-5 py-2 text-sm font-black text-tl-ink shadow-toy-sm rotate-[6deg] lg:block">
+        {totalItems}+ toy items
+      </span>
 
-      <div className="wrap relative">
-
-        <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
-          <div className="max-w-xl">
-            <p className="eyebrow mb-5">What we stock</p>
-            <h2 className="display-lg text-tl-ink mb-4">
-              Curated categories — <span className="text-tl-red">not a random pile.</span>
-            </h2>
-            <p className="body-md">
-              Explore what ToyLandia stocks so you can shop with purpose.
-            </p>
-          </div>
-          <a
-            href="https://shopee.ph/toylandia678"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ghost group"
-          >
-            Browse on Shopee
-            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
+      <div className="wrap relative z-10">
+        <header className="mx-auto mb-12 max-w-4xl text-center">
+          <p className="eyebrow-yellow mb-5 border-2 border-tl-ink shadow-toy-sm">Shop by Shopee category</p>
+          <h2 className="display-lg text-tl-ink">
+            Browse ToyLandia by category, then checkout safely on{" "}
+            <span className="text-tl-red">Shopee.</span>
+          </h2>
+          <p className="body-md mx-auto mt-5 max-w-2xl">
+            Each category opens directly to ToyLandia&apos;s Shopee store. If the live Shopee preview is blocked by the marketplace,
+            use the button on each card to continue shopping.
+          </p>
         </header>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 stagger">
-          {categories.map(({ label, Icon, img, desc, emoji }) => (
-            <article
-              key={label}
-              className="group relative rounded-3xl overflow-hidden border-2 border-tl-ink
-                         shadow-toy-sm bg-white transition-all duration-300
-                         hover:-translate-y-1.5 hover:rotate-[-0.5deg] hover:shadow-toy"
-            >
-              <div className="relative h-48 sm:h-56 bg-tl-warm overflow-hidden">
-                <img
-                  src={assetPath(img)}
-                  alt={label}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-tl-ink/85 via-tl-ink/15 to-transparent" />
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {shopeeCategories.map(({ label, total, id, image, copy, color, Icon }, index) => {
+            const url = categoryUrl(id);
 
-                {/* Icon chip */}
-                <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-tl-yellow border-2 border-tl-ink
-                                flex items-center justify-center transition-transform duration-300
-                                group-hover:rotate-12 group-hover:scale-110">
-                  <Icon className="w-4.5 h-4.5 text-tl-ink" />
+            return (
+              <article
+                key={id}
+                className="group relative overflow-hidden rounded-[2rem] border-2 border-tl-ink bg-white shadow-toy-sm transition-all duration-300 hover:-translate-y-1.5 hover:rotate-[-0.4deg] hover:shadow-toy"
+              >
+                <div className="relative h-64 overflow-hidden bg-tl-warm">
+                  <img
+                    src={shopeeImageUrl(image)}
+                    alt={`${label} category on ToyLandia Shopee`}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading={index > 2 ? "lazy" : "eager"}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-tl-ink/88 via-tl-ink/20 to-white/5" />
+
+                  <iframe
+                    title={`${label} Shopee category preview`}
+                    src={url}
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                    className="pointer-events-none absolute inset-0 h-full w-full scale-[1.04] opacity-0 transition-opacity duration-500 group-hover:opacity-15"
+                  />
+
+                  <div className="absolute left-4 top-4 flex items-center gap-2">
+                    <span className={`flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-tl-ink shadow-toy-sm ${color}`}>
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span className="rounded-full border-2 border-tl-ink bg-white px-3 py-1 text-xs font-black text-tl-ink shadow-toy-sm">
+                      {total} items
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <p className="font-fun text-3xl leading-none text-white drop-shadow-[0_3px_0_rgba(26,20,16,0.45)]">
+                      {label}
+                    </p>
+                    <p className="mt-2 max-w-sm text-sm font-semibold leading-snug text-white/86">{copy}</p>
+                  </div>
                 </div>
 
-                {/* Emoji sticker */}
-                <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-tl-red border-2 border-tl-ink
-                                flex items-center justify-center text-lg group-hover:animate-wiggle-fast">
-                  {emoji}
+                <div className="grid gap-3 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+                  <div className="rounded-2xl border border-tl-line bg-tl-warm px-4 py-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-tl-red">Shopee category link</p>
+                    <p className="mt-1 truncate text-sm font-bold text-tl-ink">{label}</p>
+                  </div>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary justify-center whitespace-nowrap"
+                  >
+                    Open category
+                  </a>
                 </div>
-              </div>
-              <div className="absolute bottom-0 inset-x-0 p-5">
-                <div className="font-fun text-white text-xl leading-tight mb-1">{label}</div>
-                <div className="text-white/80 text-xs">{desc}</div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
+
+        <div className="mt-10 overflow-hidden rounded-[2rem] border-2 border-tl-ink bg-tl-red text-white shadow-toy">
+          <div className="grid gap-0 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="relative p-6 sm:p-8">
+              <div className="absolute inset-0 bg-dots opacity-20" />
+              <div className="relative">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-tl-yellow">More items here</p>
+                <h3 className="mt-2 font-fun text-4xl leading-none sm:text-5xl">
+                  Want the full ToyLandia shelf?
+                </h3>
+                <p className="mt-3 max-w-2xl text-base font-semibold leading-relaxed text-white/86">
+                  The Shopee shop has more listings than the featured categories above. Open the official business account to see
+                  the latest stock, prices, vouchers, and checkout options.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 border-t-2 border-tl-ink bg-tl-yellow p-5 lg:min-w-[320px] lg:border-l-2 lg:border-t-0">
+              <a
+                href={SHOPEE_SHOP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline !bg-white !text-tl-ink group"
+              >
+                <ShoppingBagIcon className="h-5 w-5 group-hover:animate-wiggle-fast" />
+                More items here
+              </a>
+              <a
+                href="https://www.facebook.com/officialtoylandia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary group"
+              >
+                <StoreIcon className="h-5 w-5 group-hover:animate-wiggle-fast" />
+                Message ToyLandia
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <p className="mx-auto mt-6 max-w-3xl text-center text-xs font-semibold leading-relaxed text-tl-muted">
+          Shopee may prevent full in-page iframe previews for security. The category and shop buttons always redirect to the official
+          ToyLandia Shopee account.
+        </p>
       </div>
     </section>
   );
