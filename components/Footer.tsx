@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { assetPath } from "@/lib/assetPath";
 
 export default function Footer() {
@@ -39,6 +40,14 @@ export default function Footer() {
 
           {/* Links */}
           <nav className="flex gap-2 flex-wrap justify-center">
+            <Link
+              href="/blog"
+              className="text-xs font-semibold text-white/80 hover:text-tl-yellow
+                         px-4 py-2 rounded-full border border-white/15 hover:border-tl-yellow
+                         transition-colors"
+            >
+              Blog
+            </Link>
             {[
               { label: "Facebook", href: "https://www.facebook.com/officialtoylandia" },
               { label: "TikTok",   href: "https://www.tiktok.com/@brandnewtoys0" },

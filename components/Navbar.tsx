@@ -5,11 +5,12 @@ import { assetPath } from "@/lib/assetPath";
 import { useState, useEffect } from "react";
 
 const links = [
-  { label: "Why ToyLandia",  href: "#why-toylandia" },
-  { label: "How to Buy",     href: "#how-to-buy" },
-  { label: "Products",       href: "#products" },
-  { label: "For Resellers",  href: "#for-resellers" },
-  { label: "Contact",        href: "#contact" },
+  { label: "Why ToyLandia",  href: "/#why-toylandia" },
+  { label: "How to Buy",     href: "/#how-to-buy" },
+  { label: "Products",       href: "/#products" },
+  { label: "For Resellers",  href: "/#for-resellers" },
+  { label: "Blog",           href: "/blog" },
+  { label: "Contact",        href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -50,14 +51,14 @@ export default function Navbar() {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1">
           {links.map(({ label, href }) => (
-            <a
+            <Link
               key={label}
               href={href}
               className="px-3 py-2 text-[13px] font-medium text-tl-charcoal hover:text-tl-red
                          rounded-full transition-colors"
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -97,14 +98,14 @@ export default function Navbar() {
       >
         <div className="wrap pb-5 pt-2 space-y-1">
           {links.map(({ label, href }) => (
-            <a
+            <Link
               key={label}
               href={href}
               className="block text-sm text-tl-charcoal font-medium py-3 px-3 rounded-2xl hover:bg-tl-yellowSoft"
               onClick={() => setOpen(false)}
             >
               {label}
-            </a>
+            </Link>
           ))}
           <div className="pt-3">
             <a

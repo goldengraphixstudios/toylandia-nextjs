@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://goldengraphixstudios.github.io/toylandia-nextjs"),
   title: "ToyLandia | Brand-New Toys by the Kilo",
   description:
     "ToyLandia — brand-new toys imported directly from China, sold per kilogram. Affordable for families, gift buyers, resellers, and bulk shoppers. Shop via live selling, walk-in, Shopee, or TikTok.",

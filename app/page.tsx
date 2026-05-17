@@ -7,6 +7,7 @@ import FamilyValue from "@/components/FamilyValue";
 import Wholesale from "@/components/Wholesale";
 import Reviews from "@/components/Reviews";
 import WaysToOrder from "@/components/WaysToOrder";
+import BlogHighlights from "@/components/BlogHighlights";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -20,6 +21,7 @@ export default function Home() {
       <ProductWorlds />
       <FamilyValue />
       <Wholesale />
+      <BlogHighlights />
       <Reviews />
       <WaysToOrder />
       <FinalCTA />

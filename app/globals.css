@@ -159,6 +159,165 @@
 .stagger > *:nth-child(5) { animation-delay: 0.45s; }
 .stagger > *:nth-child(6) { animation-delay: 0.55s; }
 
+/* Public article typography and matching CMS preview/editor surface */
+.toylandia-article-prose h2 {
+  margin-top: 0;
+  color: #fff;
+  font-family: "Bagel Fat One", "Fredoka", system-ui, sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+.toylandia-article-prose h3 {
+  margin-top: 1.75rem;
+  color: #ffcc00;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+.toylandia-article-prose p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.08rem;
+  font-weight: 500;
+  line-height: 1.82;
+}
+.toylandia-article-prose strong {
+  color: #fff;
+  font-weight: 900;
+}
+.toylandia-article-prose em {
+  color: #fff6cc;
+}
+.toylandia-article-prose a {
+  color: #ffcc00;
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.18em;
+}
+.toylandia-article-prose figure {
+  margin: 1.5rem 0 1.75rem;
+  overflow: hidden;
+  border: 2px solid rgba(255, 204, 0, 0.35);
+  border-radius: 1.35rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+.toylandia-article-prose figure img {
+  display: block;
+  width: 100%;
+}
+.toylandia-article-prose figcaption {
+  padding: 0.8rem 1rem 0.95rem;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.83rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.toylandia-article-prose ul,
+.toylandia-article-prose ol {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-left: 0;
+  list-style: none;
+}
+.toylandia-article-prose li {
+  position: relative;
+  padding-left: 1.75rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.toylandia-article-prose li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #ffcc00;
+  box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.16);
+}
+.toylandia-article-prose blockquote {
+  margin: 1.75rem 0 0;
+  border-left: 0.45rem solid #ffcc00;
+  border-radius: 1rem;
+  background: rgba(255, 204, 0, 0.12);
+  padding: 1.25rem 1.35rem;
+  color: #fff6cc;
+  font-size: 1.22rem;
+  font-weight: 900;
+  line-height: 1.55;
+}
+
+.toylandia-rich-editor {
+  font-family: "Fredoka", system-ui, sans-serif;
+}
+.toylandia-rich-editor h2 {
+  margin: 1.6rem 0 0.8rem;
+  color: #1a1410;
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.toylandia-rich-editor h3 {
+  margin: 1.25rem 0 0.6rem;
+  color: #b5121e;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+.toylandia-rich-editor p {
+  margin: 0.85rem 0;
+  color: #334155;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.75;
+}
+.toylandia-rich-editor ul,
+.toylandia-rich-editor ol {
+  margin: 1rem 0;
+  padding-left: 1.4rem;
+}
+.toylandia-rich-editor li {
+  margin: 0.4rem 0;
+  color: #334155;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.toylandia-rich-editor blockquote {
+  margin: 1.25rem 0;
+  border-left: 0.35rem solid #ffcc00;
+  border-radius: 0.85rem;
+  background: #fff6cc;
+  padding: 1rem 1.15rem;
+  color: #1a1410;
+  font-weight: 800;
+}
+.toylandia-rich-editor a {
+  color: #e11d2a;
+  font-weight: 900;
+  text-decoration: underline;
+}
+.toylandia-rich-editor img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  margin: 1rem 0;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+.toylandia-rich-editor .is-empty::before {
+  float: left;
+  height: 0;
+  color: #94a3b8;
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track,
   .animate-float, .animate-float-slow, .animate-wiggle, .animate-wiggle-fast,
