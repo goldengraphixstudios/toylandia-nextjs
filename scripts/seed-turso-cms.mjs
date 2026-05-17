@@ -27,6 +27,7 @@ await client.execute(`
     deck TEXT NOT NULL,
     hero_image TEXT NOT NULL,
     takeaways TEXT NOT NULL,
+    content_html TEXT NOT NULL DEFAULT '',
     sections TEXT NOT NULL,
     faqs TEXT NOT NULL,
     cta TEXT NOT NULL,
@@ -35,6 +36,7 @@ await client.execute(`
     saved_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   )
 `);
+await client.execute("ALTER TABLE cms_posts ADD COLUMN content_html TEXT NOT NULL DEFAULT ''").catch(() => null);
 
 let inserted = 0;
 
@@ -43,9 +45,9 @@ for (const post of posts) {
     sql: `
       INSERT INTO cms_posts (
         slug, title, description, published_at, updated_at, category, read_time,
-        keywords, summary, deck, hero_image, takeaways, sections, faqs, cta, status, saved_at
+        keywords, summary, deck, hero_image, takeaways, content_html, sections, faqs, cta, status, saved_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', CURRENT_TIMESTAMP)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', CURRENT_TIMESTAMP)
       ON CONFLICT(slug) DO UPDATE SET
         title = excluded.title,
         description = excluded.description,
@@ -58,6 +60,7 @@ for (const post of posts) {
         deck = excluded.deck,
         hero_image = excluded.hero_image,
         takeaways = excluded.takeaways,
+        content_html = excluded.content_html,
         sections = excluded.sections,
         faqs = excluded.faqs,
         cta = excluded.cta,
@@ -77,6 +80,7 @@ for (const post of posts) {
       post.deck,
       JSON.stringify(post.heroImage),
       JSON.stringify(post.takeaways),
+      post.contentHtml || "",
       JSON.stringify(post.sections),
       JSON.stringify(post.faqs),
       JSON.stringify(post.cta),

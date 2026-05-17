@@ -31,6 +31,12 @@ const emptyPost: BlogPost = {
     "Reduce risk by explaining what to check before ordering.",
     "End with one clear action path.",
   ],
+  contentHtml: `
+    <h2>Answer the buyer's real question first</h2>
+    <p>Open with the useful answer before adding background. This helps SEO snippets, AI answer engines, and impatient mobile readers.</p>
+    <p>Then explain the buying psychology: what the customer is worried about, what they want, and why ToyLandia is a practical next step.</p>
+    <ul><li>Make the first paragraph specific</li><li>Use plain buying language</li><li>Add a clear next step</li></ul>
+  `,
   sections: [
     {
       heading: "Answer the buyer's real question first",
@@ -166,6 +172,8 @@ function renderBodyImage(image: { src: string; alt: string; caption?: string }) 
 }
 
 function PreviewArticle({ post }: { post: BlogPost }) {
+  const hasRichBody = Boolean(post.contentHtml?.trim());
+
   return (
     <article className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-[#1A1410] text-white shadow-sm">
       <header className="relative min-h-[420px] overflow-hidden p-6 sm:p-9">
@@ -211,30 +219,34 @@ function PreviewArticle({ post }: { post: BlogPost }) {
           </section>
         ) : null}
 
-        <div className="toylandia-article-prose mt-9 space-y-10">
-          {post.sections.map((section, index) => (
-            <section key={`${section.heading}-${index}`}>
-              <h2>{section.heading}</h2>
-              {section.image?.src ? renderBodyImage(section.image) : null}
-              {section.images?.map((image, imageIndex) => (
-                <div key={`${image.src}-${imageIndex}`}>{renderBodyImage(image)}</div>
-              ))}
-              {section.body.map((paragraph) => (
-                <p key={paragraph} dangerouslySetInnerHTML={{ __html: paragraph }} />
-              ))}
-              {section.bullets?.length ? (
-                <ul>
-                  {section.bullets.map((bullet) => (
-                    <li key={bullet}>
-                      <span dangerouslySetInnerHTML={{ __html: bullet }} />
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-              {section.quote ? <blockquote dangerouslySetInnerHTML={{ __html: section.quote }} /> : null}
-            </section>
-          ))}
-        </div>
+        {hasRichBody ? (
+          <div className="toylandia-article-prose mt-9 space-y-10" dangerouslySetInnerHTML={{ __html: post.contentHtml ?? "" }} />
+        ) : (
+          <div className="toylandia-article-prose mt-9 space-y-10">
+            {post.sections.map((section, index) => (
+              <section key={`${section.heading}-${index}`}>
+                <h2>{section.heading}</h2>
+                {section.image?.src ? renderBodyImage(section.image) : null}
+                {section.images?.map((image, imageIndex) => (
+                  <div key={`${image.src}-${imageIndex}`}>{renderBodyImage(image)}</div>
+                ))}
+                {section.body.map((paragraph) => (
+                  <div key={paragraph} dangerouslySetInnerHTML={{ __html: paragraph }} />
+                ))}
+                {section.bullets?.length ? (
+                  <ul>
+                    {section.bullets.map((bullet) => (
+                      <li key={bullet}>
+                        <span dangerouslySetInnerHTML={{ __html: bullet }} />
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                {section.quote ? <blockquote dangerouslySetInnerHTML={{ __html: section.quote }} /> : null}
+              </section>
+            ))}
+          </div>
+        )}
 
         {post.faqs.length ? (
           <section className="mt-10 border-t border-white/10 pt-8">
@@ -453,8 +465,8 @@ export default function ToylandiaCmsAdminApp() {
     updateDraft({ faqs: next });
   }
 
-  function updateSections(sections: BlogSection[]) {
-    updateDraft({ sections });
+  function updateRichArticleBody(contentHtml: string, sections: BlogSection[]) {
+    updateDraft({ contentHtml, sections });
   }
 
   const shellClass =
@@ -676,7 +688,12 @@ export default function ToylandiaCmsAdminApp() {
                   <h3 className="text-sm font-black uppercase tracking-[0.12em] text-slate-600">Rich article body</h3>
                   <p className="mt-1 text-xs font-semibold text-slate-500">Use headings, paragraphs, lists, quotes, links, and images. The preview reads from this same formatted article model.</p>
                 </div>
-                <CmsRichArticleEditor sections={draft.sections} onChange={updateSections} />
+                <CmsRichArticleEditor
+                  documentKey={selectedSlug}
+                  value={draft.contentHtml}
+                  fallbackSections={draft.sections}
+                  onChange={updateRichArticleBody}
+                />
               </div>
 
               <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">

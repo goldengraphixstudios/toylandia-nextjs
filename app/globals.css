@@ -206,6 +206,17 @@
   display: block;
   width: 100%;
 }
+.toylandia-article-prose > img,
+.toylandia-article-prose section > img,
+.toylandia-article-prose p > img {
+  display: block;
+  width: 100%;
+  max-height: 620px;
+  margin: 1.5rem 0 1.75rem;
+  border: 2px solid rgba(255, 204, 0, 0.35);
+  border-radius: 1.35rem;
+  object-fit: cover;
+}
 .toylandia-article-prose figcaption {
   padding: 0.8rem 1rem 0.95rem;
   color: rgba(255, 255, 255, 0.62);
@@ -254,6 +265,12 @@
 
 .toylandia-rich-editor {
   font-family: "Fredoka", system-ui, sans-serif;
+}
+.toylandia-rich-editor:focus {
+  outline: none;
+}
+.toylandia-rich-editor > *:first-child {
+  margin-top: 0;
 }
 .toylandia-rich-editor h2 {
   margin: 1.6rem 0 0.8rem;

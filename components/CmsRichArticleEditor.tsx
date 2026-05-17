@@ -10,8 +10,10 @@ import type { BlogSection } from "@/lib/blogPosts";
 import { assetPath } from "@/lib/assetPath";
 
 type Props = {
-  sections: BlogSection[];
-  onChange: (sections: BlogSection[]) => void;
+  documentKey: string;
+  value?: string;
+  fallbackSections: BlogSection[];
+  onChange: (html: string, sections: BlogSection[]) => void;
 };
 
 function normalizeStoredSrc(src: string) {
@@ -77,7 +79,7 @@ function htmlToSections(html: string): BlogSection[] {
   Array.from(root.children).forEach((node) => {
     const tag = node.tagName.toLowerCase();
 
-    if (tag === "h2" || tag === "h3") {
+    if (tag === "h2") {
       current = {
         heading: node.textContent?.trim() || "Untitled section",
         body: [],
@@ -90,8 +92,8 @@ function htmlToSections(html: string): BlogSection[] {
 
     const section = ensureSection();
 
-    if (tag === "p") {
-      const value = node.innerHTML.trim();
+    if (tag === "p" || tag === "h3") {
+      const value = (node as HTMLElement).outerHTML.trim();
       if (value && value !== "<br>") {
         section.body.push(value);
       }
@@ -134,11 +136,13 @@ function htmlToSections(html: string): BlogSection[] {
       section.bullets = Array.from(node.querySelectorAll("li"))
         .map((item) => item.innerHTML.trim())
         .filter(Boolean);
+      section.body.push((node as HTMLElement).outerHTML.trim());
       return;
     }
 
     if (tag === "blockquote") {
       section.quote = node.innerHTML.trim();
+      section.body.push((node as HTMLElement).outerHTML.trim());
     }
   });
 
@@ -226,9 +230,10 @@ function Toolbar({ editor }: { editor: Editor }) {
   );
 }
 
-export default function CmsRichArticleEditor({ sections, onChange }: Props) {
+export default function CmsRichArticleEditor({ documentKey, value, fallbackSections, onChange }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const isSyncing = useRef(false);
+  const loadedKey = useRef(documentKey);
+  const initialHtml = value?.trim() ? value : sectionsToHtml(fallbackSections);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -238,11 +243,10 @@ export default function CmsRichArticleEditor({ sections, onChange }: Props) {
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Placeholder.configure({ placeholder: "Write the full ToyLandia article here..." }),
     ],
-    content: sectionsToHtml(sections),
+    content: initialHtml,
     onUpdate({ editor }) {
-      if (!isSyncing.current) {
-        onChange(htmlToSections(editor.getHTML()));
-      }
+      const html = editor.getHTML();
+      onChange(html, htmlToSections(html));
     },
     editorProps: {
       attributes: {
@@ -277,17 +281,14 @@ export default function CmsRichArticleEditor({ sections, onChange }: Props) {
       return;
     }
 
-    const nextHtml = sectionsToHtml(sections);
-    if (nextHtml === editor.getHTML()) {
+    if (loadedKey.current === documentKey) {
       return;
     }
 
-    isSyncing.current = true;
+    const nextHtml = value?.trim() ? value : sectionsToHtml(fallbackSections);
+    loadedKey.current = documentKey;
     editor.commands.setContent(nextHtml, { emitUpdate: false });
-    window.requestAnimationFrame(() => {
-      isSyncing.current = false;
-    });
-  }, [editor, sections]);
+  }, [documentKey, editor, fallbackSections, value]);
 
   if (!editor) {
     return null;

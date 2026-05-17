@@ -33,6 +33,7 @@ export type BlogPost = {
   deck: string;
   heroImage: BlogImage;
   takeaways: string[];
+  contentHtml?: string;
   sections: BlogSection[];
   faqs: BlogFaq[];
   cta: {

@@ -71,6 +71,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
+  const hasRichBody = Boolean(post.contentHtml?.trim());
+
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -168,33 +170,37 @@ export default async function BlogPostPage({ params }: PageProps) {
               </section>
             ) : null}
 
-            <div className="toylandia-article-prose mt-10 space-y-12">
-              {post.sections.map((section, index) => (
-                <section key={`${section.heading}-${index}`} id={`section-${index + 1}`} className="scroll-mt-28">
-                  <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-tl-red">{String(index + 1).padStart(2, "0")}</p>
-                  <h2>{section.heading}</h2>
-                  {section.image?.src ? renderArticleImage(section.image) : null}
-                  {section.images?.map((image, imageIndex) => (
-                    <div key={`${image.src}-${imageIndex}`}>{renderArticleImage(image)}</div>
-                  ))}
-                  <div className="mt-5 space-y-5">
-                    {section.body.map((paragraph) => (
-                      <p key={paragraph} dangerouslySetInnerHTML={{ __html: paragraph }} />
+            {hasRichBody ? (
+              <div className="toylandia-article-prose mt-10 space-y-12" dangerouslySetInnerHTML={{ __html: post.contentHtml ?? "" }} />
+            ) : (
+              <div className="toylandia-article-prose mt-10 space-y-12">
+                {post.sections.map((section, index) => (
+                  <section key={`${section.heading}-${index}`} id={`section-${index + 1}`} className="scroll-mt-28">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-tl-red">{String(index + 1).padStart(2, "0")}</p>
+                    <h2>{section.heading}</h2>
+                    {section.image?.src ? renderArticleImage(section.image) : null}
+                    {section.images?.map((image, imageIndex) => (
+                      <div key={`${image.src}-${imageIndex}`}>{renderArticleImage(image)}</div>
                     ))}
-                  </div>
-                  {section.bullets?.length ? (
-                    <ul>
-                      {section.bullets.map((bullet) => (
-                        <li key={bullet}>
-                          <span dangerouslySetInnerHTML={{ __html: bullet }} />
-                        </li>
+                    <div className="mt-5 space-y-5">
+                      {section.body.map((paragraph) => (
+                        <div key={paragraph} dangerouslySetInnerHTML={{ __html: paragraph }} />
                       ))}
-                    </ul>
-                  ) : null}
-                  {section.quote ? <blockquote dangerouslySetInnerHTML={{ __html: section.quote }} /> : null}
-                </section>
-              ))}
-            </div>
+                    </div>
+                    {section.bullets?.length ? (
+                      <ul>
+                        {section.bullets.map((bullet) => (
+                          <li key={bullet}>
+                            <span dangerouslySetInnerHTML={{ __html: bullet }} />
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    {section.quote ? <blockquote dangerouslySetInnerHTML={{ __html: section.quote }} /> : null}
+                  </section>
+                ))}
+              </div>
+            )}
 
             {post.faqs.length ? (
               <section className="mt-14">

@@ -63,6 +63,7 @@ export function normalizePost(post: Partial<BlogPost>): BlogPost {
     deck: post.deck || fallback.deck,
     heroImage: normalizeImage(post.heroImage, fallback.heroImage),
     takeaways: Array.isArray(post.takeaways) ? post.takeaways : [],
+    contentHtml: post.contentHtml || "",
     sections: Array.isArray(post.sections) ? post.sections : [],
     faqs: Array.isArray(post.faqs) ? post.faqs : [],
     cta: {
@@ -92,6 +93,7 @@ async function ensureCmsSchema() {
       deck TEXT NOT NULL,
       hero_image TEXT NOT NULL,
       takeaways TEXT NOT NULL,
+      content_html TEXT NOT NULL DEFAULT '',
       sections TEXT NOT NULL,
       faqs TEXT NOT NULL,
       cta TEXT NOT NULL,
@@ -102,6 +104,11 @@ async function ensureCmsSchema() {
   `);
 
   schemaReady = true;
+}
+
+async function ensureCmsColumns() {
+  await ensureCmsSchema();
+  await getCmsClient().execute("ALTER TABLE cms_posts ADD COLUMN content_html TEXT NOT NULL DEFAULT ''").catch(() => null);
 }
 
 function rowToPost(row: Record<string, unknown>): BlogPost {
@@ -118,6 +125,7 @@ function rowToPost(row: Record<string, unknown>): BlogPost {
     deck: String(row.deck ?? ""),
     heroImage: parseJson<BlogImage>(row.hero_image, { src: "/toy-1.jpg", alt: "ToyLandia toys" }),
     takeaways: parseJson<string[]>(row.takeaways, []),
+    contentHtml: String(row.content_html ?? ""),
     sections: parseJson<BlogPost["sections"]>(row.sections, []),
     faqs: parseJson<BlogPost["faqs"]>(row.faqs, []),
     cta: parseJson<BlogPost["cta"]>(row.cta, {
@@ -132,7 +140,7 @@ export async function getCmsPosts() {
     return [];
   }
 
-  await ensureCmsSchema();
+  await ensureCmsColumns();
   const result = await getCmsClient().execute({
     sql: "SELECT * FROM cms_posts ORDER BY published_at DESC, saved_at DESC",
     args: [],
@@ -146,7 +154,7 @@ export async function getPublishedCmsPosts() {
     return [];
   }
 
-  await ensureCmsSchema();
+  await ensureCmsColumns();
   const result = await getCmsClient().execute({
     sql: "SELECT * FROM cms_posts WHERE status = 'published' ORDER BY published_at DESC, saved_at DESC",
     args: [],
@@ -160,7 +168,7 @@ export async function getPublishedCmsPost(slug: string) {
     return null;
   }
 
-  await ensureCmsSchema();
+  await ensureCmsColumns();
   const result = await getCmsClient().execute({
     sql: "SELECT * FROM cms_posts WHERE slug = ? AND status = 'published' LIMIT 1",
     args: [slug],
@@ -171,16 +179,16 @@ export async function getPublishedCmsPost(slug: string) {
 }
 
 export async function upsertCmsPost(post: BlogPost, status = "published") {
-  await ensureCmsSchema();
+  await ensureCmsColumns();
   const normalized = normalizePost(post);
 
   await getCmsClient().execute({
     sql: `
       INSERT INTO cms_posts (
         slug, title, description, published_at, updated_at, category, read_time,
-        keywords, summary, deck, hero_image, takeaways, sections, faqs, cta, status, saved_at
+        keywords, summary, deck, hero_image, takeaways, content_html, sections, faqs, cta, status, saved_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
       ON CONFLICT(slug) DO UPDATE SET
         title = excluded.title,
         description = excluded.description,
@@ -193,6 +201,7 @@ export async function upsertCmsPost(post: BlogPost, status = "published") {
         deck = excluded.deck,
         hero_image = excluded.hero_image,
         takeaways = excluded.takeaways,
+        content_html = excluded.content_html,
         sections = excluded.sections,
         faqs = excluded.faqs,
         cta = excluded.cta,
@@ -212,6 +221,7 @@ export async function upsertCmsPost(post: BlogPost, status = "published") {
       normalized.deck,
       JSON.stringify(normalized.heroImage),
       JSON.stringify(normalized.takeaways),
+      normalized.contentHtml || "",
       JSON.stringify(normalized.sections),
       JSON.stringify(normalized.faqs),
       JSON.stringify(normalized.cta),
@@ -223,7 +233,7 @@ export async function upsertCmsPost(post: BlogPost, status = "published") {
 }
 
 export async function deleteCmsPost(slug: string) {
-  await ensureCmsSchema();
+  await ensureCmsColumns();
   await getCmsClient().execute({
     sql: "DELETE FROM cms_posts WHERE slug = ?",
     args: [slug],
@@ -231,7 +241,7 @@ export async function deleteCmsPost(slug: string) {
 }
 
 export async function seedCmsPosts() {
-  await ensureCmsSchema();
+  await ensureCmsColumns();
   const existing = await getCmsClient().execute("SELECT COUNT(*) AS count FROM cms_posts");
   const count = Number(existing.rows[0]?.count ?? 0);
 
