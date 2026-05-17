@@ -11,6 +11,8 @@ import BlogHighlights from "@/components/BlogHighlights";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <main className="min-h-screen">

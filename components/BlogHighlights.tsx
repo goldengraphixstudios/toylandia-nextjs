@@ -3,8 +3,8 @@ import Link from "next/link";
 import { getAllBlogPosts } from "@/lib/blogPosts";
 import { assetPath } from "@/lib/assetPath";
 
-export default function BlogHighlights() {
-  const posts = getAllBlogPosts().slice(0, 3);
+export default async function BlogHighlights() {
+  const posts = (await getAllBlogPosts()).slice(0, 3);
 
   return (
     <section id="blog" className="section overflow-hidden bg-white">

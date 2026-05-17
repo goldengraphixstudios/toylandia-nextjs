@@ -1,16 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CmsRichArticleEditor from "@/components/CmsRichArticleEditor";
-import seedPosts from "@/content/blog-posts.json";
 import type { BlogFaq, BlogPost, BlogSection } from "@/lib/blogPosts";
 import { assetPath } from "@/lib/assetPath";
 
-const STORAGE_KEY = "toylandia-cms-posts-v1";
-const SESSION_KEY = "toylandia-cms-session-v1";
 const ADMIN_EMAIL = "admin@toylandia.com";
-const ADMIN_PASSWORD = "ToyLandiaCMS!2026";
 
 type Panel = "home" | "articles" | "seo" | "settings";
 
@@ -81,24 +77,6 @@ function arrayToLines(value: string[]) {
   return value.join("\n");
 }
 
-function readStoredPosts() {
-  if (typeof window === "undefined") {
-    return seedPosts as BlogPost[];
-  }
-
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    return seedPosts as BlogPost[];
-  }
-
-  try {
-    const parsed = JSON.parse(stored) as BlogPost[];
-    return Array.isArray(parsed) && parsed.length ? parsed : (seedPosts as BlogPost[]);
-  } catch {
-    return seedPosts as BlogPost[];
-  }
-}
-
 function sortPosts(posts: BlogPost[]) {
   return [...posts].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
@@ -146,6 +124,44 @@ function StatCard({ label, value, note }: { label: string; value: string; note: 
       <p className="mt-2 text-3xl font-black tracking-tight text-slate-950">{value}</p>
       <p className="mt-2 text-sm font-medium text-slate-600">{note}</p>
     </div>
+  );
+}
+
+async function cmsFetch<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers ?? {}),
+    },
+  });
+  const payload = (await response.json().catch(() => ({}))) as T & { error?: string };
+
+  if (!response.ok) {
+    throw new Error(payload.error || "CMS request failed.");
+  }
+
+  return payload;
+}
+
+function renderBodyImage(image: { src: string; alt: string; caption?: string }) {
+  const isInlineData = image.src.startsWith("data:");
+  return (
+    <figure>
+      {isInlineData ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={image.src} alt={image.alt} className="aspect-video w-full object-cover" />
+      ) : (
+        <Image
+          src={assetPath(image.src)}
+          alt={image.alt}
+          width={1200}
+          height={675}
+          className="aspect-video w-full object-cover"
+        />
+      )}
+      {image.caption ? <figcaption>{image.caption}</figcaption> : null}
+    </figure>
   );
 }
 
@@ -199,18 +215,10 @@ function PreviewArticle({ post }: { post: BlogPost }) {
           {post.sections.map((section, index) => (
             <section key={`${section.heading}-${index}`}>
               <h2>{section.heading}</h2>
-              {section.image?.src ? (
-                <figure>
-                  <Image
-                    src={assetPath(section.image.src)}
-                    alt={section.image.alt}
-                    width={1200}
-                    height={675}
-                    className="aspect-video w-full object-cover"
-                  />
-                  {section.image.caption ? <figcaption>{section.image.caption}</figcaption> : null}
-                </figure>
-              ) : null}
+              {section.image?.src ? renderBodyImage(section.image) : null}
+              {section.images?.map((image, imageIndex) => (
+                <div key={`${image.src}-${imageIndex}`}>{renderBodyImage(image)}</div>
+              ))}
               {section.body.map((paragraph) => (
                 <p key={paragraph} dangerouslySetInnerHTML={{ __html: paragraph }} />
               ))}
@@ -256,38 +264,56 @@ export default function ToylandiaCmsAdminApp() {
   const [email, setEmail] = useState(ADMIN_EMAIL);
   const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
+  const [source, setSource] = useState("loading");
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    setLoggedIn(window.localStorage.getItem(SESSION_KEY) === "active");
-    const loadedPosts = sortPosts(readStoredPosts());
+  const loadPosts = useCallback(async (preferredSlug?: string) => {
+    const payload = await cmsFetch<{ posts: BlogPost[]; source: string; warning?: string }>("/api/cms/posts");
+    const loadedPosts = sortPosts(payload.posts);
+    setSource(payload.source);
     setPosts(loadedPosts);
-    const first = loadedPosts[0] ?? emptyPost;
-    setSelectedSlug(first.slug);
-    setDraft(clonePost(first));
+    const next = loadedPosts.find((post) => post.slug === preferredSlug) ?? loadedPosts[0] ?? emptyPost;
+    setSelectedSlug(next.slug);
+    setDraft(clonePost(next));
+    if (payload.warning) {
+      setNotice(payload.warning);
+    }
   }, []);
 
   useEffect(() => {
-    if (posts.length) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-    }
-  }, [posts]);
+    cmsFetch<{ authenticated: boolean; email: string }>("/api/cms/auth")
+      .then((session) => {
+        setEmail(session.email || ADMIN_EMAIL);
+        setLoggedIn(session.authenticated);
+        if (session.authenticated) {
+          void loadPosts();
+        }
+      })
+      .catch(() => {
+        setNotice("CMS API is not reachable. Deploy this project on a server runtime to use Turso.");
+        setSource("offline");
+      });
+  }, [loadPosts]);
 
-  const selectedPost = useMemo(() => posts.find((post) => post.slug === selectedSlug), [posts, selectedSlug]);
   const allKeywords = useMemo(() => Array.from(new Set(posts.flatMap((post) => post.keywords))).slice(0, 18), [posts]);
   const latestUpdate = posts[0]?.updatedAt ?? new Date().toISOString().slice(0, 10);
 
-  function login() {
-    if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      window.localStorage.setItem(SESSION_KEY, "active");
+  async function login() {
+    try {
+      await cmsFetch<{ authenticated: boolean }>("/api/cms/auth", {
+        method: "POST",
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      });
       setLoggedIn(true);
       setNotice("");
-      return;
+      await loadPosts();
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Invalid CMS login.");
     }
-    setNotice("Invalid CMS login. Use the approved ToyLandia admin credentials.");
   }
 
-  function signOut() {
-    window.localStorage.removeItem(SESSION_KEY);
+  async function signOut() {
+    await cmsFetch("/api/cms/auth", { method: "DELETE" }).catch(() => null);
     setLoggedIn(false);
     setPassword("");
   }
@@ -306,7 +332,8 @@ export default function ToylandiaCmsAdminApp() {
     setDraft((current) => ({ ...current, ...update }));
   }
 
-  function saveDraft() {
+  async function saveDraft() {
+    setSaving(true);
     const safeSlug = slugify(draft.slug || draft.title) || "toylandia-article";
     const nextPost = {
       ...draft,
@@ -314,16 +341,27 @@ export default function ToylandiaCmsAdminApp() {
       updatedAt: new Date().toISOString().slice(0, 10),
     };
 
-    setPosts((current) => {
-      const exists = current.some((post) => post.slug === selectedSlug || post.slug === safeSlug);
-      const next = exists
-        ? current.map((post) => (post.slug === selectedSlug || post.slug === safeSlug ? nextPost : post))
-        : [nextPost, ...current];
-      return sortPosts(next);
-    });
-    setSelectedSlug(safeSlug);
-    setDraft(clonePost(nextPost));
-    setNotice("Article saved locally. Export JSON when you want to move CMS content into the static site.");
+    try {
+      const payload = await cmsFetch<{ post: BlogPost; source: string }>("/api/cms/posts", {
+        method: "POST",
+        body: JSON.stringify({ post: nextPost, status: "published" }),
+      });
+      setPosts((current) => {
+        const exists = current.some((post) => post.slug === selectedSlug || post.slug === safeSlug);
+        const next = exists
+          ? current.map((post) => (post.slug === selectedSlug || post.slug === safeSlug ? payload.post : post))
+          : [payload.post, ...current];
+        return sortPosts(next);
+      });
+      setSource(payload.source);
+      setSelectedSlug(payload.post.slug);
+      setDraft(clonePost(payload.post));
+      setNotice("Article saved to Turso and is available to the public blog.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Article save failed.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function newArticle() {
@@ -344,25 +382,34 @@ export default function ToylandiaCmsAdminApp() {
     setNotice("Duplicated into a new editable draft. Save when ready.");
   }
 
-  function deleteArticle() {
-    if (!window.confirm("Delete this local CMS article draft?")) {
+  async function deleteArticle() {
+    if (!window.confirm("Delete this CMS article from Turso?")) {
       return;
     }
-    const remaining = posts.filter((post) => post.slug !== selectedSlug);
-    setPosts(remaining);
-    const next = remaining[0] ?? emptyPost;
-    setSelectedSlug(next.slug);
-    setDraft(clonePost(next));
+    try {
+      await cmsFetch(`/api/cms/posts/${selectedSlug}`, { method: "DELETE" });
+      const remaining = posts.filter((post) => post.slug !== selectedSlug);
+      setPosts(remaining);
+      const next = remaining[0] ?? emptyPost;
+      setSelectedSlug(next.slug);
+      setDraft(clonePost(next));
+      setNotice("Article deleted from Turso.");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Delete failed.");
+    }
   }
 
-  function resetSeeds() {
-    if (!window.confirm("Replace local CMS drafts with the current built-in article seeds?")) {
+  async function resetSeeds() {
+    if (!window.confirm("Seed Turso with the built-in ToyLandia articles? This will only run if the table is empty.")) {
       return;
     }
-    const next = sortPosts(seedPosts as BlogPost[]);
-    setPosts(next);
-    setSelectedSlug(next[0]?.slug ?? emptyPost.slug);
-    setDraft(clonePost(next[0] ?? emptyPost));
+    try {
+      const result = await cmsFetch<{ inserted: number; skipped: number }>("/api/cms/seed", { method: "POST" });
+      await loadPosts();
+      setNotice(result.inserted ? `Seeded ${result.inserted} articles to Turso.` : `Seed skipped. Turso already has ${result.skipped} articles.`);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Seed failed.");
+    }
   }
 
   function exportJson() {
@@ -386,11 +433,13 @@ export default function ToylandiaCmsAdminApp() {
         if (!Array.isArray(parsed)) {
           throw new Error("Invalid JSON");
         }
-        const next = sortPosts(parsed);
-        setPosts(next);
-        setSelectedSlug(next[0]?.slug ?? emptyPost.slug);
-        setDraft(clonePost(next[0] ?? emptyPost));
-        setNotice("Imported article JSON into the CMS workspace.");
+        Promise.all(parsed.map((post) => cmsFetch("/api/cms/posts", {
+          method: "POST",
+          body: JSON.stringify({ post, status: "published" }),
+        })))
+          .then(() => loadPosts())
+          .then(() => setNotice("Imported article JSON into Turso."))
+          .catch((error) => setNotice(error instanceof Error ? error.message : "Import failed."));
       } catch {
         setNotice("Import failed. Use the exported ToyLandia blog JSON format.");
       }
@@ -485,10 +534,10 @@ export default function ToylandiaCmsAdminApp() {
           <section className="grid gap-5 xl:grid-cols-[1fr_420px]">
             <div className="space-y-5">
               <div className="grid gap-4 md:grid-cols-4">
-                <StatCard label="Articles" value={String(posts.length)} note="Static seeds plus local CMS drafts" />
+                <StatCard label="Articles" value={String(posts.length)} note="Loaded from Turso or seed fallback" />
                 <StatCard label="Keywords" value={String(allKeywords.length)} note="Unique visible search topics" />
                 <StatCard label="Last update" value={latestUpdate} note="Newest edited article date" />
-                <StatCard label="Status" value="Static" note="Export JSON to ship content changes" />
+                <StatCard label="Status" value={source === "turso" ? "Turso" : "Setup"} note={source === "turso" ? "Database-backed publishing is active" : "Using seeds until Turso token is configured"} />
               </div>
 
               <div className={`rounded-3xl border ${surfaceClass} p-5`}>
@@ -553,8 +602,8 @@ export default function ToylandiaCmsAdminApp() {
                   <p className="mt-1 text-sm font-medium opacity-70">Edit the complete article, not disconnected resource blocks.</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={saveDraft} className="rounded-full bg-tl-red px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white">
-                    Save
+                  <button type="button" onClick={saveDraft} disabled={saving} className="rounded-full bg-tl-red px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:cursor-not-allowed disabled:opacity-60">
+                    {saving ? "Saving" : "Save"}
                   </button>
                   <button type="button" onClick={duplicateArticle} className="rounded-full border border-slate-300 px-4 py-2 text-xs font-black uppercase tracking-[0.12em]">
                     Duplicate
@@ -714,7 +763,7 @@ export default function ToylandiaCmsAdminApp() {
           <section className={`rounded-3xl border ${surfaceClass} p-6`}>
             <h2 className="text-2xl font-black tracking-tight">CMS tools</h2>
             <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed opacity-70">
-              Static hosting cannot write directly to the deployed article JSON. Use export/import for handoff, backups, and replacing the website seed file.
+              Turso is the live article database. Use import/export for backups or bulk content movement.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <button type="button" onClick={exportJson} className="rounded-2xl border border-slate-200 bg-tl-yellow p-5 text-left text-slate-950">
@@ -728,11 +777,11 @@ export default function ToylandiaCmsAdminApp() {
               </label>
               <button type="button" onClick={resetSeeds} className="rounded-2xl border border-slate-200 bg-white p-5 text-left text-slate-950">
                 <span className="text-sm font-black uppercase tracking-[0.12em]">Reset seeds</span>
-                <span className="mt-2 block text-sm font-semibold">Restore the built-in articles from the website.</span>
+                <span className="mt-2 block text-sm font-semibold">Push built-in articles to Turso if the database is empty.</span>
               </button>
-              <button type="button" onClick={() => window.localStorage.removeItem(STORAGE_KEY)} className="rounded-2xl border border-red-200 bg-white p-5 text-left text-red-600">
-                <span className="text-sm font-black uppercase tracking-[0.12em]">Clear storage</span>
-                <span className="mt-2 block text-sm font-semibold">Remove saved local drafts after refresh.</span>
+              <button type="button" onClick={() => loadPosts()} className="rounded-2xl border border-slate-200 bg-white p-5 text-left text-slate-950">
+                <span className="text-sm font-black uppercase tracking-[0.12em]">Refresh DB</span>
+                <span className="mt-2 block text-sm font-semibold">Reload articles from the Turso API.</span>
               </button>
             </div>
           </section>

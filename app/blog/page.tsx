@@ -12,8 +12,10 @@ export const metadata: Metadata = {
     "Read ToyLandia guides about toys per kilo, party giveaways, reseller toy inventory, and browsing ToyLandia on Shopee.",
 };
 
-export default function BlogPage() {
-  const posts = getAllBlogPosts();
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const posts = await getAllBlogPosts();
   const featured = posts[0];
 
   const collectionJsonLd = {

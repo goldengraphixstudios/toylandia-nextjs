@@ -19,6 +19,9 @@ function normalizeStoredSrc(src: string) {
 }
 
 function displaySrc(src: string) {
+  if (src.startsWith("data:")) {
+    return src;
+  }
   return src.startsWith("/") ? assetPath(src) : src;
 }
 
@@ -33,18 +36,22 @@ function richContent(value: string) {
 function sectionsToHtml(sections: BlogSection[]) {
   return sections
     .map((section) => {
-      const image = section.image?.src
-        ? `<figure><img src="${escapeHtml(displaySrc(section.image.src))}" alt="${escapeHtml(section.image.alt)}">${
-            section.image.caption ? `<figcaption>${escapeHtml(section.image.caption)}</figcaption>` : ""
-          }</figure>`
-        : "";
+      const images = [section.image, ...(section.images ?? [])]
+        .filter((image): image is NonNullable<typeof image> => Boolean(image?.src))
+        .map(
+          (image) =>
+            `<figure><img src="${escapeHtml(displaySrc(image.src))}" alt="${escapeHtml(image.alt)}">${
+              image.caption ? `<figcaption>${escapeHtml(image.caption)}</figcaption>` : ""
+            }</figure>`,
+        )
+        .join("");
       const body = section.body.map((paragraph) => `<p>${richContent(paragraph)}</p>`).join("");
       const bullets = section.bullets?.length
         ? `<ul>${section.bullets.map((bullet) => `<li>${richContent(bullet)}</li>`).join("")}</ul>`
         : "";
       const quote = section.quote ? `<blockquote>${richContent(section.quote)}</blockquote>` : "";
 
-      return `<h2>${escapeHtml(section.heading)}</h2>${image}${body}${bullets}${quote}`;
+      return `<h2>${escapeHtml(section.heading)}</h2>${images}${body}${bullets}${quote}`;
     })
     .join("");
 }
@@ -94,22 +101,32 @@ function htmlToSections(html: string): BlogSection[] {
     if (tag === "figure") {
       const image = node.querySelector("img");
       if (image) {
-        section.image = {
+        const parsedImage = {
           src: normalizeStoredSrc(image.getAttribute("src") ?? ""),
           alt: image.getAttribute("alt") || section.heading,
           caption: node.querySelector("figcaption")?.textContent?.trim() ?? "",
         };
+        if (!section.image?.src) {
+          section.image = parsedImage;
+        } else {
+          section.images = [...(section.images ?? []), parsedImage];
+        }
       }
       return;
     }
 
     if (tag === "img") {
       const image = node as HTMLImageElement;
-      section.image = {
+      const parsedImage = {
         src: normalizeStoredSrc(image.getAttribute("src") ?? ""),
         alt: image.getAttribute("alt") || section.heading,
         caption: "",
       };
+      if (!section.image?.src) {
+        section.image = parsedImage;
+      } else {
+        section.images = [...(section.images ?? []), parsedImage];
+      }
       return;
     }
 
@@ -217,7 +234,7 @@ export default function CmsRichArticleEditor({ sections, onChange }: Props) {
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
-      Image.configure({ inline: false, allowBase64: false }),
+      Image.configure({ inline: false, allowBase64: true }),
       Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
       Placeholder.configure({ placeholder: "Write the full ToyLandia article here..." }),
     ],
@@ -230,6 +247,27 @@ export default function CmsRichArticleEditor({ sections, onChange }: Props) {
     editorProps: {
       attributes: {
         class: "toylandia-rich-editor min-h-[520px] bg-white p-6 text-slate-950 outline-none",
+      },
+      handlePaste(view, event) {
+        const imageFiles = Array.from(event.clipboardData?.files ?? []).filter((file) => file.type.startsWith("image/"));
+        if (!imageFiles.length) {
+          return false;
+        }
+
+        event.preventDefault();
+        imageFiles.forEach((file) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const src = String(reader.result ?? "");
+            if (src) {
+              const position = view.state.selection.anchor;
+              view.dispatch(view.state.tr.insert(position, view.state.schema.nodes.image.create({ src, alt: file.name || "Pasted ToyLandia article image" })));
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+
+        return true;
       },
     },
   });

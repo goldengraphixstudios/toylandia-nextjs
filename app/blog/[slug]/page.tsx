@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { getAllBlogPosts, getBlogPost } from "@/lib/blogPosts";
+import { getBlogPost } from "@/lib/blogPosts";
 import { assetPath } from "@/lib/assetPath";
 
 type PageProps = {
@@ -17,12 +17,10 @@ function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, "");
 }
 
-export function generateStaticParams() {
-  return getAllBlogPosts().map((post) => ({ slug: post.slug }));
-}
+export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const post = getBlogPost(params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const post = await getBlogPost(params.slug);
   if (!post) {
     return {};
   }
@@ -42,8 +40,32 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function BlogPostPage({ params }: PageProps) {
-  const post = getBlogPost(params.slug);
+function renderArticleImage(image: { src: string; alt: string; caption?: string }) {
+  const src = assetPath(image.src);
+  const isInlineData = image.src.startsWith("data:");
+
+  return (
+    <figure>
+      {isInlineData ? (
+        // Pasted CMS images can be stored as data URLs, which should render as plain images.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={image.alt} className="aspect-video w-full object-cover" />
+      ) : (
+        <Image
+          src={src}
+          alt={image.alt}
+          width={1200}
+          height={675}
+          className="aspect-video w-full object-cover"
+        />
+      )}
+      {image.caption ? <figcaption>{image.caption}</figcaption> : null}
+    </figure>
+  );
+}
+
+export default async function BlogPostPage({ params }: PageProps) {
+  const post = await getBlogPost(params.slug);
 
   if (!post) {
     notFound();
@@ -151,18 +173,10 @@ export default function BlogPostPage({ params }: PageProps) {
                 <section key={`${section.heading}-${index}`} id={`section-${index + 1}`} className="scroll-mt-28">
                   <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-tl-red">{String(index + 1).padStart(2, "0")}</p>
                   <h2>{section.heading}</h2>
-                  {section.image?.src ? (
-                    <figure>
-                      <Image
-                        src={assetPath(section.image.src)}
-                        alt={section.image.alt}
-                        width={1200}
-                        height={675}
-                        className="aspect-video w-full object-cover"
-                      />
-                      {section.image.caption ? <figcaption>{section.image.caption}</figcaption> : null}
-                    </figure>
-                  ) : null}
+                  {section.image?.src ? renderArticleImage(section.image) : null}
+                  {section.images?.map((image, imageIndex) => (
+                    <div key={`${image.src}-${imageIndex}`}>{renderArticleImage(image)}</div>
+                  ))}
                   <div className="mt-5 space-y-5">
                     {section.body.map((paragraph) => (
                       <p key={paragraph} dangerouslySetInnerHTML={{ __html: paragraph }} />

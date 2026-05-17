@@ -10,6 +10,7 @@ export type BlogSection = {
   heading: string;
   body: string[];
   image?: BlogImage;
+  images?: BlogImage[];
   bullets?: string[];
   quote?: string;
 };
@@ -43,10 +44,21 @@ export type BlogPost = {
 
 const typedPosts = posts as BlogPost[];
 
-export function getAllBlogPosts() {
+export function getSeedBlogPosts() {
   return [...typedPosts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
-export function getBlogPost(slug: string) {
+export function getSeedBlogPost(slug: string) {
   return typedPosts.find((post) => post.slug === slug);
+}
+
+export async function getAllBlogPosts() {
+  const { getPublishedCmsPosts } = await import("@/lib/cmsDb");
+  const cmsPosts = await getPublishedCmsPosts();
+  return cmsPosts.length ? cmsPosts : getSeedBlogPosts();
+}
+
+export async function getBlogPost(slug: string) {
+  const { getPublishedCmsPost } = await import("@/lib/cmsDb");
+  return (await getPublishedCmsPost(slug)) ?? getSeedBlogPost(slug);
 }
