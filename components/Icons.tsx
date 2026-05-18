@@ -215,6 +215,15 @@ export function ShoppingBagIcon({ className = base }: IconProps) {
   );
 }
 
+export function ShirtIcon({ className = base }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 4l3 2 3-2 4 2.5 2 4.5-3.5 1.5L17 9v11H7V9l-.5 3.5L3 11l2-4.5L9 4z" />
+      <path d="M9 4c.5 1.7 1.5 2.5 3 2.5S14.5 5.7 15 4" />
+    </svg>
+  );
+}
+
 export function MusicIcon({ className = base }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

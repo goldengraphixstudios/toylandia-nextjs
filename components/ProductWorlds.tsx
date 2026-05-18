@@ -2,18 +2,32 @@
 import {
   BabyIcon,
   BookOpenIcon,
-  BoxIcon,
   GiftIcon,
   PuzzleIcon,
+  ShirtIcon,
   ShoppingBagIcon,
   StarIcon,
   StoreIcon,
   ToyBrickIcon,
 } from "@/components/Icons";
+import { assetPath } from "@/lib/assetPath";
 
 const SHOPEE_SHOP_URL = "https://shopee.ph/toylandia678";
 
-const shopeeCategories = [
+type ShopeeCategory = {
+  label: string;
+  total: number | string;
+  id?: string;
+  href?: string;
+  image?: string;
+  imageUrl?: string;
+  copy: string;
+  color: string;
+  accent: string;
+  Icon: React.ComponentType<{ className?: string }>;
+};
+
+const shopeeCategories: ShopeeCategory[] = [
   {
     label: "Collectibles",
     total: 247,
@@ -74,18 +88,50 @@ const shopeeCategories = [
     accent: "bg-tl-yellow",
     Icon: PuzzleIcon,
   },
+  {
+    label: "Kids Wear",
+    total: "New",
+    href: SHOPEE_SHOP_URL,
+    imageUrl: "/toy-14.jpg",
+    copy: "Kids' wear finds, cute outfits, and wearable picks for everyday gifting.",
+    color: "bg-tl-yellow text-tl-ink",
+    accent: "bg-tl-red",
+    Icon: ShirtIcon,
+  },
 ];
 
 function shopeeImageUrl(image: string) {
   return `https://down-ph.img.susercontent.com/file/${image}`;
 }
 
-function categoryUrl(id: string) {
-  return `${SHOPEE_SHOP_URL}?shopCollection=${id}&tab=product`;
+function categoryImageUrl(category: Pick<ShopeeCategory, "image" | "imageUrl">) {
+  if (category.imageUrl) {
+    return assetPath(category.imageUrl);
+  }
+
+  return shopeeImageUrl(category.image ?? "");
+}
+
+function categoryUrl(category: Pick<ShopeeCategory, "id" | "href">) {
+  if (category.href) {
+    return category.href;
+  }
+
+  return `${SHOPEE_SHOP_URL}?shopCollection=${category.id}&tab=product`;
+}
+
+function itemLabel(total: ShopeeCategory["total"], mode: "short" | "long" = "short") {
+  if (typeof total === "number") {
+    return mode === "long" ? `${total} listed items` : `${total} items`;
+  }
+
+  return mode === "long" ? "Browse latest arrivals" : total;
 }
 
 export default function ProductWorlds() {
-  const totalItems = shopeeCategories.reduce((sum, category) => sum + category.total, 0);
+  const totalItems = shopeeCategories.reduce((sum, category) => {
+    return sum + (typeof category.total === "number" ? category.total : 0);
+  }, 0);
 
   return (
     <section id="products" className="section overflow-hidden bg-[#FFF5DA]">
@@ -113,18 +159,19 @@ export default function ProductWorlds() {
         </header>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {shopeeCategories.map(({ label, total, id, image, copy, color, accent, Icon }, index) => {
-            const url = categoryUrl(id);
+          {shopeeCategories.map((category, index) => {
+            const { label, total, id, copy, color, accent, Icon } = category;
+            const url = categoryUrl(category);
 
             return (
               <article
-                key={id}
+                key={id ?? label}
                 className="group relative overflow-hidden rounded-[2rem] border-2 border-tl-ink bg-white shadow-toy-sm transition-all duration-300 hover:-translate-y-1.5 hover:rotate-[-0.4deg] hover:shadow-toy"
               >
                 <div className="relative h-80 overflow-hidden bg-tl-warm sm:h-96">
                   <div className={`absolute left-0 top-0 z-10 h-full w-3 ${accent}`} />
                   <img
-                    src={shopeeImageUrl(image)}
+                    src={categoryImageUrl(category)}
                     alt={`${label} category on ToyLandia Shopee`}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                     loading={index > 2 ? "lazy" : "eager"}
@@ -136,7 +183,7 @@ export default function ProductWorlds() {
                       <Icon className="h-5 w-5" />
                     </span>
                     <span className="rounded-full border-2 border-tl-ink bg-white px-3 py-1 text-xs font-black text-tl-ink shadow-toy-sm">
-                      {total} items
+                      {itemLabel(total)}
                     </span>
                   </div>
 
@@ -155,7 +202,7 @@ export default function ProductWorlds() {
                   <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="rounded-2xl border-2 border-tl-line bg-tl-warm px-4 py-3">
                       <p className="text-[11px] font-black uppercase tracking-[0.16em] text-tl-red">Available in this category</p>
-                      <p className="mt-1 text-lg font-black text-tl-ink">{total} listed items</p>
+                      <p className="mt-1 text-lg font-black text-tl-ink">{itemLabel(total, "long")}</p>
                     </div>
                     <a
                       href={url}
