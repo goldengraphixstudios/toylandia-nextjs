@@ -131,7 +131,7 @@ export default function ProductWorlds() {
       <div className="absolute -right-20 bottom-14 h-80 w-80 rounded-full bg-tl-red/20 blur-3xl" />
 
       <span aria-hidden className="absolute left-[5%] top-14 hidden rounded-full border-2 border-tl-ink bg-white px-5 py-2 text-sm font-black text-tl-red shadow-toy-sm rotate-[-8deg] md:block">
-        Shopee categories
+        Shopee highlights
       </span>
       <span aria-hidden className="absolute bottom-16 right-[7%] hidden rounded-full border-2 border-tl-ink bg-tl-yellow px-5 py-2 text-sm font-black text-tl-ink shadow-toy-sm rotate-[6deg] lg:block">
         Featured picks

@@ -54,6 +54,7 @@ const channels = [
     desc: `Reach ToyLandia on Viber at ${TOYLANDIA_PHONE_DISPLAY} for buying help and location checks.`,
     href: `viber://chat?number=%2B${TOYLANDIA_PHONE_DIGITS}`,
     cta: "Chat on Viber",
+    appLink: true,
   },
 ];
 
@@ -79,7 +80,7 @@ export default function WaysToOrder() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 stagger">
-          {channels.map(({ Icon, title, desc, href, cta, primary }) => (
+          {channels.map(({ Icon, title, desc, href, cta, primary, appLink }) => (
             <article
               key={title}
               className={`group relative rounded-3xl p-7 flex flex-col gap-4 transition-all duration-300
@@ -108,8 +109,8 @@ export default function WaysToOrder() {
               </div>
               <a
                 href={href}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={appLink ? undefined : "_blank"}
+                rel={appLink ? undefined : "noopener noreferrer"}
                 className={`mt-auto inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide
                   ${primary ? "text-tl-yellow hover:underline" : "text-tl-red hover:underline"}`}
               >

@@ -54,7 +54,6 @@ export default function Footer() {
               { label: "Shopee",   href: "https://shopee.ph/toylandia678" },
               { label: "Waze",     href: "https://waze.com/ul?q=ToyLandia%20Cabuyao%20Laguna&navigate=yes" },
               { label: "WhatsApp", href: "https://wa.me/639293781462" },
-              { label: "Viber",    href: "viber://chat?number=%2B639293781462" },
             ].map((l) => (
               <a
                 key={l.label}
