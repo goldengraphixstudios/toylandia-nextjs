@@ -19,7 +19,6 @@ type ShopeeCategory = {
   total: number | string;
   id?: string;
   href?: string;
-  image?: string;
   imageUrl?: string;
   copy: string;
   color: string;
@@ -29,61 +28,61 @@ type ShopeeCategory = {
 
 const shopeeCategories: ShopeeCategory[] = [
   {
-    label: "Collectibles",
-    total: 247,
-    id: "11021353",
-    image: "ph-11134207-820le-mn5f1txgrpxk33",
-    copy: "Character toys, display pieces, model finds, and fast-moving toy picks.",
+    label: "Doctor Set Toy TZ168",
+    total: "Shopee",
+    href: "https://shopee.ph/Toylandia-Doctor-Set-Toy-TZ168-i.1800279490.48859212440?extraParams=%7B%22display_model_id%22%3A400814805477%2C%22model_selection_logic%22%3A3%7D",
+    imageUrl: "/featured-doctor-set.jpg",
+    copy: "Role-play medical kit for pretend clinics, gift sets, and activity play.",
     color: "bg-tl-red text-white",
     accent: "bg-tl-red",
     Icon: StarIcon,
   },
   {
-    label: "Educational Toys",
-    total: 8,
-    id: "11021368",
-    image: "ph-11134207-820lh-mn3sn8i3fymcd4",
-    copy: "Learning toys, activity sets, and play items for skill-building.",
+    label: "Cooker Set TZ23",
+    total: "Shopee",
+    href: "https://shopee.ph/Toylandia-Cooker-set-TZ23-i.1800279490.51758982806?extraParams=%7B%22display_model_id%22%3A282544737659%2C%22model_selection_logic%22%3A3%7D",
+    imageUrl: "/featured-cooker-set.jpg",
+    copy: "Pretend kitchen play for kids who love cooking, hosting, and make-believe.",
     color: "bg-tl-yellow text-tl-ink",
     accent: "bg-tl-yellow",
     Icon: BookOpenIcon,
   },
   {
-    label: "Dress Up & Pretend",
-    total: 6,
-    id: "11021397",
-    image: "ph-11134207-820lb-mn3ptnimp7gh28",
-    copy: "Role-play toys, pretend-play sets, and imagination-ready finds.",
+    label: "Drawing Board TZ263",
+    total: "Shopee",
+    href: "https://shopee.ph/Toylandia-Drawing-Board-TZ263-i.1800279490.49059260018?extraParams=%7B%22display_model_id%22%3A350817315974%2C%22model_selection_logic%22%3A3%7D",
+    imageUrl: "/featured-drawing-board.jpg",
+    copy: "Creative board pick for doodles, learning time, and quiet play.",
     color: "bg-white text-tl-ink",
     accent: "bg-tl-red",
     Icon: GiftIcon,
   },
   {
-    label: "Dolls",
-    total: 5,
-    id: "11021377",
-    image: "ph-11134207-820l4-mn2qapothcsi22",
-    copy: "Doll picks and companion toys for gift-ready browsing.",
+    label: "Cross Country TZ52",
+    total: "Shopee",
+    href: "https://shopee.ph/Toylandia-Cross-Country-TZ52-i.1800279490.53158995699?extraParams=%7B%22display_model_id%22%3A395797242150%2C%22model_selection_logic%22%3A3%7D",
+    imageUrl: "/featured-cross-country.jpg",
+    copy: "Vehicle toy pick for action play, gifting, and fast-moving toy shelves.",
     color: "bg-tl-red text-white",
     accent: "bg-tl-yellow",
     Icon: BabyIcon,
   },
   {
-    label: "Electronic Toys",
-    total: 5,
-    id: "11021365",
-    image: "ph-11134207-820l9-mn0yvtq9wh6u3c",
-    copy: "Light-up, sound, battery-operated, and interactive toy options.",
+    label: "Truck Blender TZ185",
+    total: "Shopee",
+    href: "https://shopee.ph/Toylandia-Truck-Blender-TZ185-i.1800279490.54859196544?extraParams=%7B%22display_model_id%22%3A360814863033%2C%22model_selection_logic%22%3A3%7D",
+    imageUrl: "/featured-truck-blender.jpg",
+    copy: "A playful truck-style toy with bold shelf presence for curious kids.",
     color: "bg-tl-yellow text-tl-ink",
     accent: "bg-tl-red",
     Icon: ToyBrickIcon,
   },
   {
-    label: "Boards & Family Games",
-    total: 2,
-    id: "11021360",
-    image: "ph-11134207-820l5-mnb7j22ph0xtd7",
-    copy: "Family games and shared-play picks for kids and groups.",
+    label: "Rock Crawler T57",
+    total: "Shopee",
+    href: "https://shopee.ph/Toylandia-Rock-Crawler-T57-i.1800279490.46659025699?extraParams=%7B%22display_model_id%22%3A415797563136%2C%22model_selection_logic%22%3A3%7D",
+    imageUrl: "/featured-rock-crawler.jpg",
+    copy: "Rugged vehicle pick for kids who like cars, movement, and adventure play.",
     color: "bg-white text-tl-ink",
     accent: "bg-tl-yellow",
     Icon: PuzzleIcon,
@@ -92,24 +91,16 @@ const shopeeCategories: ShopeeCategory[] = [
     label: "Kids Wear",
     total: "New",
     href: SHOPEE_SHOP_URL,
-    imageUrl: "/toy-14.jpg",
-    copy: "Kids' wear finds, cute outfits, and wearable picks for everyday gifting.",
+    imageUrl: "/kids-wear.jpg",
+    copy: "Kids' wear and wearable finds for everyday outfits, gifts, and cute add-ons.",
     color: "bg-tl-yellow text-tl-ink",
     accent: "bg-tl-red",
     Icon: ShirtIcon,
   },
 ];
 
-function shopeeImageUrl(image: string) {
-  return `https://down-ph.img.susercontent.com/file/${image}`;
-}
-
-function categoryImageUrl(category: Pick<ShopeeCategory, "image" | "imageUrl">) {
-  if (category.imageUrl) {
-    return assetPath(category.imageUrl);
-  }
-
-  return shopeeImageUrl(category.image ?? "");
+function categoryImageUrl(category: Pick<ShopeeCategory, "imageUrl">) {
+  return assetPath(category.imageUrl ?? "/toy-1.jpg");
 }
 
 function categoryUrl(category: Pick<ShopeeCategory, "id" | "href">) {
@@ -125,14 +116,14 @@ function itemLabel(total: ShopeeCategory["total"], mode: "short" | "long" = "sho
     return mode === "long" ? `${total} listed items` : `${total} items`;
   }
 
+  if (total === "Shopee" && mode === "long") {
+    return "Shop product listing";
+  }
+
   return mode === "long" ? "Browse latest arrivals" : total;
 }
 
 export default function ProductWorlds() {
-  const totalItems = shopeeCategories.reduce((sum, category) => {
-    return sum + (typeof category.total === "number" ? category.total : 0);
-  }, 0);
-
   return (
     <section id="products" className="section overflow-hidden bg-[#FFF5DA]">
       <div className="absolute inset-0 bg-grid opacity-70" />
@@ -143,18 +134,18 @@ export default function ProductWorlds() {
         Shopee categories
       </span>
       <span aria-hidden className="absolute bottom-16 right-[7%] hidden rounded-full border-2 border-tl-ink bg-tl-yellow px-5 py-2 text-sm font-black text-tl-ink shadow-toy-sm rotate-[6deg] lg:block">
-        {totalItems}+ toy items
+        Featured picks
       </span>
 
       <div className="wrap relative z-10">
         <header className="mx-auto mb-12 max-w-4xl text-center">
-          <p className="eyebrow-yellow mb-5 border-2 border-tl-ink shadow-toy-sm">Shop by Shopee category</p>
+          <p className="eyebrow-yellow mb-5 border-2 border-tl-ink shadow-toy-sm">Featured ToyLandia picks</p>
           <h2 className="display-lg text-tl-ink">
-            Browse ToyLandia by category, then checkout safely on{" "}
+            Browse the client&apos;s highlighted toys, then checkout safely on{" "}
             <span className="text-tl-red">Shopee.</span>
           </h2>
           <p className="body-md mx-auto mt-5 max-w-2xl">
-            Each category opens directly to ToyLandia&apos;s Shopee store, so customers can browse current listings, vouchers, and checkout options without waiting on embedded marketplace previews.
+            These cards point to the specific products requested by the client. Images use ToyLandia&apos;s local photo bank so the website stays fast while Shopee handles stock, pricing, vouchers, and checkout.
           </p>
         </header>
 
@@ -172,7 +163,7 @@ export default function ProductWorlds() {
                   <div className={`absolute left-0 top-0 z-10 h-full w-3 ${accent}`} />
                   <img
                     src={categoryImageUrl(category)}
-                    alt={`${label} category on ToyLandia Shopee`}
+                    alt={`${label} on ToyLandia Shopee`}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                     loading={index > 2 ? "lazy" : "eager"}
                   />
@@ -191,7 +182,7 @@ export default function ProductWorlds() {
 
                 <div className="relative p-5">
                   <div className="absolute -top-5 left-5 rounded-full border-2 border-tl-ink bg-white px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-tl-red shadow-toy-sm">
-                    Shopee category
+                    Shopee highlight
                   </div>
 
                   <div className="mt-2">
@@ -201,7 +192,7 @@ export default function ProductWorlds() {
 
                   <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="rounded-2xl border-2 border-tl-line bg-tl-warm px-4 py-3">
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-tl-red">Available in this category</p>
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-tl-red">Open on Shopee</p>
                       <p className="mt-1 text-lg font-black text-tl-ink">{itemLabel(total, "long")}</p>
                     </div>
                     <a
@@ -210,7 +201,7 @@ export default function ProductWorlds() {
                       rel="noopener noreferrer"
                       className="btn-primary justify-center whitespace-nowrap"
                     >
-                      Open category
+                      View item
                     </a>
                   </div>
                 </div>
@@ -229,7 +220,7 @@ export default function ProductWorlds() {
                   Want the full ToyLandia shelf?
                 </h3>
                 <p className="mt-3 max-w-2xl text-base font-semibold leading-relaxed text-white/86">
-                  The Shopee shop has more listings than the featured categories above. Open the official business account to see
+                  The Shopee shop has more listings than the highlighted picks above. Open the official business account to see
                   the latest stock, prices, vouchers, and checkout options.
                 </p>
               </div>
@@ -259,7 +250,7 @@ export default function ProductWorlds() {
         </div>
 
         <p className="mx-auto mt-6 max-w-3xl text-center text-xs font-semibold leading-relaxed text-tl-muted">
-          Category and shop buttons redirect to the official ToyLandia Shopee account for current stock, prices, vouchers, and checkout.
+          Product and shop buttons redirect to the official ToyLandia Shopee account for current stock, prices, vouchers, and checkout.
         </p>
       </div>
     </section>

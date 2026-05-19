@@ -52,6 +52,9 @@ export default function Footer() {
               { label: "Facebook", href: "https://www.facebook.com/officialtoylandia" },
               { label: "TikTok",   href: "https://www.tiktok.com/@brandnewtoys0" },
               { label: "Shopee",   href: "https://shopee.ph/toylandia678" },
+              { label: "Waze",     href: "https://waze.com/ul?q=ToyLandia%20Cabuyao%20Laguna&navigate=yes" },
+              { label: "WhatsApp", href: "https://wa.me/639293781462" },
+              { label: "Viber",    href: "viber://chat?number=%2B639293781462" },
             ].map((l) => (
               <a
                 key={l.label}
@@ -70,6 +73,7 @@ export default function Footer() {
           {/* Legal */}
           <div className="text-xs text-white/55 text-center sm:text-right">
             <p>toylandia6@gmail.com</p>
+            <p className="mt-1">WhatsApp/Viber: +63 929 378 1462</p>
             <p className="mt-1">© {new Date().getFullYear()} ToyLandia. All rights reserved.</p>
           </div>
         </div>

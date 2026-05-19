@@ -1,5 +1,9 @@
 import { MessageIcon, TvIcon, StoreIcon, ShoppingBagIcon, MusicIcon, ClockIcon } from "@/components/Icons";
 
+const TOYLANDIA_PHONE_DISPLAY = "+63 929 378 1462";
+const TOYLANDIA_PHONE_DIGITS = "639293781462";
+const WAZE_TOYLANDIA_URL = "https://waze.com/ul?q=ToyLandia%20Cabuyao%20Laguna&navigate=yes";
+
 const channels = [
   {
     Icon: MessageIcon,
@@ -18,10 +22,10 @@ const channels = [
   },
   {
     Icon: StoreIcon,
-    title: "Walk-In",
-    desc: "Browse in person — message first to confirm current location and availability.",
-    href: "https://www.facebook.com/officialtoylandia",
-    cta: "Ask for location",
+    title: "Waze Location",
+    desc: "Open ToyLandia on Waze, then message first to confirm current store hours and availability.",
+    href: WAZE_TOYLANDIA_URL,
+    cta: "Open Waze",
   },
   {
     Icon: ShoppingBagIcon,
@@ -36,6 +40,20 @@ const channels = [
     desc: "Watch us live and shop directly on TikTok — one-tap ordering.",
     href: "https://www.tiktok.com/@brandnewtoys0",
     cta: "Visit TikTok Shop",
+  },
+  {
+    Icon: MessageIcon,
+    title: "WhatsApp",
+    desc: `Chat through WhatsApp at ${TOYLANDIA_PHONE_DISPLAY} for quick questions and order assistance.`,
+    href: `https://wa.me/${TOYLANDIA_PHONE_DIGITS}`,
+    cta: "Chat on WhatsApp",
+  },
+  {
+    Icon: MessageIcon,
+    title: "Viber",
+    desc: `Reach ToyLandia on Viber at ${TOYLANDIA_PHONE_DISPLAY} for buying help and location checks.`,
+    href: `viber://chat?number=%2B${TOYLANDIA_PHONE_DIGITS}`,
+    cta: "Chat on Viber",
   },
 ];
 
@@ -55,7 +73,7 @@ export default function WaysToOrder() {
             Order your way.
           </h2>
           <p className="body-md">
-            Five channels to get your ToyLandia haul. Message first for the fastest response —
+            Multiple channels to get your ToyLandia haul. Message first for the fastest response —
             marketplaces are secondary options.
           </p>
         </header>
@@ -115,6 +133,13 @@ export default function WaysToOrder() {
             <strong>Email:</strong>{" "}
             <a href="mailto:toylandia6@gmail.com" className="text-tl-red hover:underline">
               toylandia6@gmail.com
+            </a>
+          </span>
+          <span className="hidden sm:inline w-1 h-1 rounded-full bg-tl-line" />
+          <span className="text-tl-ink">
+            <strong>WhatsApp/Viber:</strong>{" "}
+            <a href={`https://wa.me/${TOYLANDIA_PHONE_DIGITS}`} className="text-tl-red hover:underline" target="_blank" rel="noopener noreferrer">
+              {TOYLANDIA_PHONE_DISPLAY}
             </a>
           </span>
         </div>
