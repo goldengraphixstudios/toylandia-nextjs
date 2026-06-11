@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { getBlogPost } from "@/lib/blogPosts";
+import { getAllBlogPosts, getBlogPost } from "@/lib/blogPosts";
 import { assetPath } from "@/lib/assetPath";
 
 type PageProps = {
@@ -17,7 +17,12 @@ function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, "");
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const posts = await getAllBlogPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await getBlogPost(params.slug);

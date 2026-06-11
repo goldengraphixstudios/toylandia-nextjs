@@ -42,6 +42,8 @@ export default function ImageMarquee({
             <img
               src={assetPath(src)}
               alt=""
+              loading="lazy"
+              decoding="async"
               className="h-full w-auto block select-none"
               draggable={false}
             />

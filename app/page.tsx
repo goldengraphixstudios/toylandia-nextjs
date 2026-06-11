@@ -12,8 +12,6 @@ import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 import ShopChoicePopup from "@/components/ShopChoicePopup";
 
-export const dynamic = "force-dynamic";
-
 export default function Home() {
   return (
     <main className="min-h-screen">
